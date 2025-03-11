@@ -38,3 +38,6 @@ next-env.d.ts
 .env
 dev.db
 dev.db-journal
+
+# yarn lock file
+yarn.lock
