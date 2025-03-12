@@ -8,7 +8,6 @@ async function main() {
 
   // トランザクションを使用してすべての操作を実行
   await prisma.$transaction(async (tx) => {
-    
     console.log('既存データを削除中...')
     await tx.skillRequirement.deleteMany({})
     await tx.projectEntry.deleteMany({})
@@ -21,37 +20,37 @@ async function main() {
     const adminUser = await tx.user.create({
       data: ADMIN_USER
     })
-    
+
     // 一般ユーザーの登録
     console.log('一般ユーザーを登録中...')
     const createdUsers = await Promise.all(
-      USERS.map(user => 
+      USERS.map((user) =>
         tx.user.create({
           data: user
         })
       )
     )
-    
+
     // プロジェクトの登録
     console.log('プロジェクトを登録中...')
     const createdProjects = await Promise.all(
-      PROJECTS.map(project => 
+      PROJECTS.map((project) =>
         tx.project.create({
           data: project
         })
       )
     )
-    
+
     // スキルの登録
     console.log('スキルを登録中...')
     const createdSkills = await Promise.all(
-      SKILLS.map(skill => 
+      SKILLS.map((skill) =>
         tx.skill.create({
           data: skill
         })
       )
     )
-    
+
     // プロジェクトエントリーの登録
     console.log('プロジェクトエントリーを登録中...')
     const projectEntries = [
@@ -73,13 +72,13 @@ async function main() {
     ]
 
     await Promise.all(
-      projectEntries.map(entry => 
+      projectEntries.map((entry) =>
         tx.projectEntry.create({
           data: entry
         })
       )
     )
-    
+
     // スキル要件の登録
     console.log('スキル要件を登録中...')
     const skillRequirements = [
@@ -101,7 +100,7 @@ async function main() {
     ]
 
     await Promise.all(
-      skillRequirements.map(req => 
+      skillRequirements.map((req) =>
         tx.skillRequirement.create({
           data: req
         })
@@ -112,7 +111,6 @@ async function main() {
   console.log('シードデータの登録が完了しました！')
 }
 
-
 main()
   .catch((e) => {
     console.error('エラーが発生しました:')
@@ -120,6 +118,5 @@ main()
     process.exit(1)
   })
   .finally(async () => {
- 
     await prisma.$disconnect()
   })
