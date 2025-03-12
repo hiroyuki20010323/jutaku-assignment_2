@@ -558,6 +558,7 @@ erDiagram
     users {
       UUID id FK "auth.usersを参照"
       STRING name
+      STRING email
       ENUM role "user | admin"
       DATETIME created_at
       DATETIME updated_at
