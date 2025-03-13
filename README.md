@@ -550,3 +550,57 @@ slack のメンションについては、質問をしたい人につける。
 
 デザインについて、質問がある場合、Figma にコメントを残した上で、Slack にて、質問を記載する
 slack のメンションについては、質問をしたい人につける。
+
+## ER図
+
+```mermaid
+erDiagram
+    users {
+      UUID id FK "auth.usersを参照"
+      STRING name
+      STRING email
+      ENUM role "user | admin"
+      DATETIME created_at
+      DATETIME updated_at
+    }
+
+    projects {
+      UUID id PK
+      STRING summary
+      DATE deadline
+      NUMBER unit_price
+      DATETIME created_at
+      DATETIME updated_at
+    }
+
+    project_entries {
+      UUID id PK
+      UUID user_id FK 
+      UUID project_id FK 
+      DATETIME created_at
+      DATETIME updated_at
+    }
+
+    skills {
+      UUID id PK
+      STRING skill_name
+      DATETIME created_at
+      DATETIME updated_at
+    }
+
+    skill_requirements {
+      UUID id PK
+      UUID project_id FK 
+      UUID skill_id FK 
+      DATETIME created_at
+      DATETIME updated_at
+    }
+
+    %% リレーションシップ
+    users ||--o{ project_entries : "エントリ申請"
+    projects ||--o{ project_entries : "エントリ確認"
+    projects ||--o{ skill_requirements : "必要なスキル"
+    skills ||--o{ skill_requirements : "スキル要件"
+```
+    
+
