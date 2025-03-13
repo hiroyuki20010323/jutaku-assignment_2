@@ -34,19 +34,22 @@ export const USERS = [
 export const PROJECTS = [
   {
     id: uuidv4(),
-    summary: 'ECサイトリニューアルプロジェクト',
+    title: 'ECサイトリニューアルプロジェクト',
+    summary: 'ECサイトのデザインリニューアルと機能改善を行うプロジェクトです',
     deadline: new Date('2025-12-31T23:59:59Z'),
     unitPrice: 800000
   },
   {
     id: uuidv4(),
-    summary: '社内管理システム開発',
+    title: '社内管理システム開発',
+    summary: '人事・経理・在庫管理を統合した社内システムの開発です',
     deadline: new Date('2025-11-30T23:59:59Z'),
     unitPrice: 650000
   },
   {
     id: uuidv4(),
-    summary: 'モバイルアプリ開発プロジェクト',
+    title: 'モバイルアプリ開発プロジェクト',
+    summary: '顧客向けモバイルアプリケーションの新規開発です',
     deadline: new Date('2025-05-15T23:59:59Z'),
     unitPrice: 950000
   }

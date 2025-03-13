@@ -29,6 +29,7 @@ enum Role {
 
 model Project {
   id                String              @id @default(uuid())
+  title             String
   summary           String
   deadline          DateTime            @db.Date
   unitPrice         Int                 @map("unit_price")
