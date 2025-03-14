@@ -1,5 +1,17 @@
 'use client'
-import { Box, Title, Text, Paper, Group, Badge, Button, Container, Flex, Modal, Center } from '@mantine/core'
+import {
+  Box,
+  Title,
+  Text,
+  Paper,
+  Group,
+  Badge,
+  Button,
+  Container,
+  Flex,
+  Modal,
+  Center
+} from '@mantine/core'
 import { PROJECTS } from '../_component/ProjectList'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
@@ -14,15 +26,15 @@ type ProjectDataProps = {
 export default function ProjectDetail({ params }: ProjectDataProps) {
   const [modalOpened, setModalOpened] = useState(false)
   const project = PROJECTS.find((p) => p.id === params.projectId)
-  
+
   if (!project) {
     notFound()
   }
 
   return (
     <Container size="lg" py="xl">
-        <Modal 
-        opened={modalOpened} 
+      <Modal
+        opened={modalOpened}
         onClose={() => setModalOpened(false)}
         centered
         size="md"
@@ -30,24 +42,23 @@ export default function ProjectDetail({ params }: ProjectDataProps) {
       >
         <Box py="md">
           <Center>
-            <Text  fw={700} mb="xl">エントリーしました！</Text>
+            <Text fw={700} mb="xl">
+              エントリーしました！
+            </Text>
           </Center>
           <Center>
-            <Button 
-              color="blue" 
-              w={300}
-              onClick={() => setModalOpened(false)}
-            >
+            <Button color="blue" w={300} onClick={() => setModalOpened(false)}>
               OK
             </Button>
           </Center>
         </Box>
       </Modal>
 
-      
       <Flex justify="space-between" align="center" mb="xl">
         <Box w={100} />
-        <Title order={2} ta="center">案件詳細</Title>
+        <Title order={2} ta="center">
+          案件詳細
+        </Title>
         <Box w={100} ta="right">
           <Button component={Link} href="/projects" variant="contained">
             戻る
@@ -57,7 +68,9 @@ export default function ProjectDetail({ params }: ProjectDataProps) {
 
       <Paper p="xl" radius="md" withBorder mx="auto" maw={800}>
         <Box my="md">
-          <Text fw={700} mb="xs">案件作成日</Text>
+          <Text fw={700} mb="xs">
+            案件作成日
+          </Text>
           <Box ml={40} mb="lg">
             <Text suppressHydrationWarning>
               {project.createdAt.toLocaleDateString('ja-JP', {
@@ -69,17 +82,23 @@ export default function ProjectDetail({ params }: ProjectDataProps) {
             </Text>
           </Box>
 
-          <Text fw={700} mb="xs">案件名</Text>
+          <Text fw={700} mb="xs">
+            案件名
+          </Text>
           <Box ml={40} mb="lg">
             <Text>{project.title}</Text>
           </Box>
 
-          <Text fw={700} mb="xs">案件詳細</Text>
+          <Text fw={700} mb="xs">
+            案件詳細
+          </Text>
           <Box ml={40} mb="lg">
             <Text>{project.summary}</Text>
           </Box>
 
-          <Text fw={700} mb="xs">必要なスキル</Text>
+          <Text fw={700} mb="xs">
+            必要なスキル
+          </Text>
           <Box ml={40} mb="lg">
             <Group>
               {project.skills.map((skill) => (
@@ -90,7 +109,9 @@ export default function ProjectDetail({ params }: ProjectDataProps) {
             </Group>
           </Box>
 
-          <Text fw={700} mb="xs">募集締切</Text>
+          <Text fw={700} mb="xs">
+            募集締切
+          </Text>
           <Box ml={40} mb="lg">
             <Text suppressHydrationWarning>
               {project.deadline.toLocaleDateString('ja-JP', {
@@ -102,21 +123,23 @@ export default function ProjectDetail({ params }: ProjectDataProps) {
             </Text>
           </Box>
 
-          <Text fw={700} mb="xs">単価</Text>
+          <Text fw={700} mb="xs">
+            単価
+          </Text>
           <Box ml={40} mb="lg">
             <Text>¥{project.unitPrice.toLocaleString()}</Text>
           </Box>
         </Box>
 
-        <Button 
-        fullWidth 
-        color="blue" 
-        mt="xl" 
-        size="md"
-        onClick={() => setModalOpened(true)}
-      >
-        この案件にエントリーする
-      </Button>
+        <Button
+          fullWidth
+          color="blue"
+          mt="xl"
+          size="md"
+          onClick={() => setModalOpened(true)}
+        >
+          この案件にエントリーする
+        </Button>
       </Paper>
     </Container>
   )
