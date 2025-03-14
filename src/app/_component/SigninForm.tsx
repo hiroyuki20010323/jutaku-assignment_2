@@ -16,13 +16,12 @@ import {
   Title,
   Stack
 } from '@mantine/core'
+import { SignInFormData } from '~/types/auth'
+import { signInSchema } from '~/schema/auth'
 
 // サインイン用のZodスキーマ
-const signInSchema = z.object({
-  email: z.string().email({ message: '無効なメールアドレスです' }),
-  password: z.string().min(1, { message: 'パスワードは必須です' })
-})
-type SignInFormData = z.infer<typeof signInSchema>
+
+
 
 export function SigninForm() {
   const {

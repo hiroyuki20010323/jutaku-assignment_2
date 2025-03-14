@@ -1,4 +1,4 @@
 import type { z } from 'zod'
-import type { loginSchema } from '~/schema/auth'
+import type { signInSchema } from '~/schema/auth'
 
-export type LoginFormValues = z.infer<typeof loginSchema>
+export type SignInFormData = z.infer<typeof signInSchema>

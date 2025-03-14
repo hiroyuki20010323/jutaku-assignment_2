@@ -2,44 +2,43 @@
 import { Box, Button, PasswordInput, TextInput } from '@mantine/core'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { loginSchema } from '~/schema/auth'
-import type { LoginFormValues } from '~/types/auth'
+
+import { signin } from '@/serverActions/supabaseAuth'
+import { SignInFormData } from '~/types/auth'
+import { signInSchema } from '~/schema/auth'
 
 export const AdminSigninForm = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors }
-  } = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: '',
-      password: ''
-    }
+    formState: { errors, isSubmitting }
+  } = useForm<SignInFormData>({
+    resolver: zodResolver(signInSchema)
   })
 
-  const onSubmit = (data: LoginFormValues) => {
+  const onSubmit = async(data: SignInFormData) => {
     console.log('ログイン処理発火')
+    await signin(data)
   }
 
   return (
     <Box component="form" onSubmit={handleSubmit(onSubmit)} maw={400} mx="auto">
-      <TextInput
-        label="メールアドレス"
-        placeholder="your@gmail.com"
-        required
-        error={errors.email?.message}
-        {...register('email')}
-      />
+       <TextInput
+            label="メールアドレス"
+            placeholder="email"
+            {...register('email')}
+            // React Hook Form のエラーを Mantine 側の error プロップに渡す
+            error={errors.email?.message}
+            disabled={isSubmitting}
+          />
 
-      <PasswordInput
-        label="パスワード"
-        placeholder="Password"
-        required
-        mt="md"
-        error={errors.password?.message}
-        {...register('password')}
-      />
+          <PasswordInput
+            label="パスワード"
+            placeholder="password"
+            {...register('password')}
+            error={errors.password?.message}
+            disabled={isSubmitting}
+          />
 
       <Button type="submit" fullWidth mt="xl">
         ログイン
