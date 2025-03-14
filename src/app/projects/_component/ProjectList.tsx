@@ -2,10 +2,10 @@
 import React from 'react'
 import { Box, Button, Title, Table, Badge, Text } from '@mantine/core'
 import Link from 'next/link'
-import { RouteLiteral } from 'nextjs-routes'
+import type { RouteLiteral } from 'nextjs-routes'
 export const PROJECTS = [
   {
-    id:"sodfjpadovpo",
+    id: 'sodfjpadovpo',
     title: 'ECサイトリニューアルプロジェクト',
     summary: 'ECサイトのデザインリニューアルと機能改善を行うプロジェクトです',
     deadline: new Date('2025-12-31T23:59:59Z'),
@@ -14,7 +14,7 @@ export const PROJECTS = [
     createdAt: new Date('2023-06-15T09:30:00+09:00')
   },
   {
-    id: "abcdef123456",
+    id: 'abcdef123456',
     title: 'モバイルアプリ開発プロジェクト',
     summary: 'クロスプラットフォーム対応のモバイルアプリ開発',
     deadline: new Date('2025-10-15T23:59:59Z'),
@@ -68,9 +68,7 @@ export const ProjectList = () => {
               </Table.Td>
               <Table.Td>{project.title}</Table.Td>
               <Table.Td>
-                <Text lineClamp={1}>
-                  {project.summary}
-                </Text>
+                <Text lineClamp={1}>{project.summary}</Text>
               </Table.Td>
               <Table.Td>
                 {project.skills.map((skill) => (
