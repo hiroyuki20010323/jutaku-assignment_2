@@ -1,5 +1,4 @@
 import { Box, Button, Center, Modal, Text, Flex } from '@mantine/core'
-import { useState } from 'react'
 
 type DeleteProjectModalProps = {
   isOpen: boolean

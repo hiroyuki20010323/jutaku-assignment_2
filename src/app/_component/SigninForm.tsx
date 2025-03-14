@@ -1,6 +1,5 @@
 'use client'
 import React from 'react'
-import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { signin } from '@/serverActions/supabaseAuth'
@@ -11,8 +10,6 @@ import {
   Button,
   TextInput,
   PasswordInput,
-  Anchor,
-  Text,
   Title,
   Stack
 } from '@mantine/core'

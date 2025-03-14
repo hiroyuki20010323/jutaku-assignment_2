@@ -11,7 +11,6 @@ import {
   Flex,
   Modal,
   Center,
-  Stack
 } from '@mantine/core'
 import { PROJECTS } from '../_component/ProjectList'
 import { notFound } from 'next/navigation'

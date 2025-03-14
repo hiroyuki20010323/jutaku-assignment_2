@@ -8,7 +8,6 @@ import {
   Badge,
   Text,
   Container,
-  Group,
   Flex
 } from '@mantine/core'
 import Link from 'next/link'
