@@ -16,12 +16,10 @@ import {
   Title,
   Stack
 } from '@mantine/core'
-import { SignInFormData } from '~/types/auth'
+import type { SignInFormData } from '~/types/auth'
 import { signInSchema } from '~/schema/auth'
 
 // サインイン用のZodスキーマ
-
-
 
 export function SigninForm() {
   const {
