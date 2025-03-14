@@ -60,7 +60,7 @@ export default function ProjectDetail({ params }: ProjectDataProps) {
       <Title order={2} ta="center" mb="md">
         案件詳細
       </Title>
-      
+
       <Box mb="xl">
         <Flex justify="flex-end">
           <Button component={Link} href="/projects" variant="contained" w={100}>
