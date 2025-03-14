@@ -1,20 +1,28 @@
 'use client'
 import React, { useState } from 'react'
-import { Box, Button, Title, Table, Badge, Text, Container, Group, Flex } from '@mantine/core'
+import {
+  Box,
+  Button,
+  Title,
+  Table,
+  Badge,
+  Text,
+  Container,
+  Group,
+  Flex
+} from '@mantine/core'
 import Link from 'next/link'
 import type { RouteLiteral } from 'nextjs-routes'
 import { PROJECTS } from '@/app/projects/_component/ProjectList'
 import DeleteProjectModal from './_component/DeleteProjectModal'
 
 export default function AdminProjects() {
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false)
 
-
- 
   const handleConfirmDelete = () => {
     // 削除処理のロジックを書くところ
-    setDeleteModalOpen(false);
-  };
+    setDeleteModalOpen(false)
+  }
 
   return (
     <Container size="lg" py="xl">
@@ -105,11 +113,11 @@ export default function AdminProjects() {
       </Table>
 
       {/* 削除確認モーダル */}
-        <DeleteProjectModal
-          isOpen={deleteModalOpen}
-          onClose={() => setDeleteModalOpen(false)}
-          onConfirm={handleConfirmDelete}
-        />
+      <DeleteProjectModal
+        isOpen={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={handleConfirmDelete}
+      />
     </Container>
   )
 }

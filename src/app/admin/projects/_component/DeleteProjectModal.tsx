@@ -1,10 +1,10 @@
-import { Box, Button, Center, Modal, Text, Flex } from "@mantine/core";
-import { useState } from "react";
+import { Box, Button, Center, Modal, Text, Flex } from '@mantine/core'
+import { useState } from 'react'
 
-type DeleteProjectModalProps =  {
-  isOpen: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
+type DeleteProjectModalProps = {
+  isOpen: boolean
+  onClose: () => void
+  onConfirm: () => void
 }
 
 export default function DeleteProjectModal({
@@ -13,13 +13,7 @@ export default function DeleteProjectModal({
   onConfirm
 }: DeleteProjectModalProps) {
   return (
-    <Modal
-      opened={isOpen}
-      onClose={onClose}
-      centered
-      size="md"
-      withCloseButton
-    >
+    <Modal opened={isOpen} onClose={onClose} centered size="md" withCloseButton>
       <Box py="md">
         <Center>
           <Text fw={700} mb="xl">
@@ -28,7 +22,13 @@ export default function DeleteProjectModal({
         </Center>
         <Box mt="xl">
           <Flex justify="flex-end">
-            <Button color="gray" w={100} variant="outline" mr="md" onClick={onClose}>
+            <Button
+              color="gray"
+              w={100}
+              variant="outline"
+              mr="md"
+              onClick={onClose}
+            >
               いいえ
             </Button>
             <Button color="red" w={80} onClick={onConfirm}>
