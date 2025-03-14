@@ -3,24 +3,21 @@ import { Box, Button, PasswordInput, TextInput } from '@mantine/core'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { loginSchema } from '~/schema/auth'
-import { LoginFormValues } from '~/types/auth'
-
+import type { LoginFormValues } from '~/types/auth'
 
 export const AdminSigninForm = () => {
-  
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors }
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: '',
-      password: '',
-    },
+      password: ''
+    }
   })
 
-  
   const onSubmit = (data: LoginFormValues) => {
     console.log('ログイン処理発火')
   }
