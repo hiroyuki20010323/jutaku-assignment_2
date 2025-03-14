@@ -10,7 +10,8 @@ import {
   Container,
   Flex,
   Modal,
-  Center
+  Center,
+  Stack
 } from '@mantine/core'
 import { PROJECTS } from '../_component/ProjectList'
 import { notFound } from 'next/navigation'
@@ -33,6 +34,7 @@ export default function ProjectDetail({ params }: ProjectDataProps) {
 
   return (
     <Container size="lg" py="xl">
+      {/* モーダル */}
       <Modal
         opened={modalOpened}
         onClose={() => setModalOpened(false)}
@@ -53,18 +55,19 @@ export default function ProjectDetail({ params }: ProjectDataProps) {
           </Center>
         </Box>
       </Modal>
+      {/* モーダル */}
 
-      <Flex justify="space-between" align="center" mb="xl">
-        <Box w={100} />
-        <Title order={2} ta="center">
-          案件詳細
-        </Title>
-        <Box w={100} ta="right">
-          <Button component={Link} href="/projects" variant="contained">
+      <Title order={2} ta="center" mb="md">
+        案件詳細
+      </Title>
+      
+      <Box mb="xl">
+        <Flex justify="flex-end">
+          <Button component={Link} href="/projects" variant="contained" w={100}>
             戻る
           </Button>
-        </Box>
-      </Flex>
+        </Flex>
+      </Box>
 
       <Paper p="xl" radius="md" withBorder mx="auto" maw={800}>
         <Box my="md">
