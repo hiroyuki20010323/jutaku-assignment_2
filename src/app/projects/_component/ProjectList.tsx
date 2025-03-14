@@ -30,8 +30,11 @@ export const ProjectList = () => {
       <Title order={2} ta="center" mb="lg">
         案件一覧
       </Title>
-      <Box mb="lg">
-        <Button ml="auto" mr="0" display={'block'}>
+      <Box style={{ display: 'flex', justifyContent: 'flex-end' }} mb={40}>
+        <Button 
+          component={Link} 
+          href="/entry-list"
+        >
           エントリー一覧
         </Button>
       </Box>
