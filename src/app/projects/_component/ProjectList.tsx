@@ -11,7 +11,7 @@ export const PROJECTS = [
     deadline: new Date('2025-12-31T23:59:59Z'),
     unitPrice: 800000,
     skills: ['React', 'Next.js', 'AWS'],
-    createdAt: new Date('2023-06-15T09:30:00+09:00')
+    createdAt: new Date('2023-06-15T00:30:00Z')
   },
   {
     id: 'abcdef123456',
@@ -20,7 +20,7 @@ export const PROJECTS = [
     deadline: new Date('2025-10-15T23:59:59Z'),
     unitPrice: 1200000,
     skills: ['React Native', 'Firebase', 'TypeScript'],
-    createdAt: new Date('2023-08-22T14:45:00+09:00')
+    createdAt: new Date('2023-08-22T05:45:00Z')
   }
 ]
 
@@ -63,7 +63,8 @@ export const ProjectList = () => {
                 {project.createdAt.toLocaleDateString('ja-JP', {
                   year: 'numeric',
                   month: '2-digit',
-                  day: '2-digit'
+                  day: '2-digit',
+                  timeZone: 'Asia/Tokyo'
                 })}
               </Table.Td>
               <Table.Td>{project.title}</Table.Td>
