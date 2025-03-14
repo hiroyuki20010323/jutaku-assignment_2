@@ -10,7 +10,7 @@ import {
   Container,
   Flex,
   Modal,
-  Center,
+  Center
 } from '@mantine/core'
 import { PROJECTS } from '../_component/ProjectList'
 import { notFound } from 'next/navigation'
