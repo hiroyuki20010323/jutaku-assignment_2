@@ -31,10 +31,7 @@ export const ProjectList = () => {
         案件一覧
       </Title>
       <Box style={{ display: 'flex', justifyContent: 'flex-end' }} mb={40}>
-        <Button 
-          component={Link} 
-          href="/entry-list"
-        >
+        <Button component={Link} href="/entry-list">
           エントリー一覧
         </Button>
       </Box>
