@@ -1,7 +1,7 @@
-'use client';
+'use client'
 
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import {
   TextInput,
   Textarea,
@@ -13,15 +13,15 @@ import {
   Title,
   Container,
   Flex,
-  Text,
-} from '@mantine/core';
-import Link from 'next/link';
-import { Controller } from 'react-hook-form';
-import { DatePicker } from '@mantine/dates';
-import { useEffect} from 'react';
-import { useEditProjectStore } from '@/store';
-import { EditProjectInput } from '~/types/projectEdit';
-import { editProjectSchema } from '~/schema/projectEdit';
+  Text
+} from '@mantine/core'
+import Link from 'next/link'
+import { Controller } from 'react-hook-form'
+import { DatePicker } from '@mantine/dates'
+import { useEffect } from 'react'
+import { useEditProjectStore } from '@/store'
+import type { EditProjectInput } from '~/types/projectEdit'
+import { editProjectSchema } from '~/schema/projectEdit'
 
 // 仮のスキルリスト
 const AVAILABLE_SKILLS = [
@@ -29,18 +29,20 @@ const AVAILABLE_SKILLS = [
   { value: 'nextjs', label: 'Next.js' },
   { value: 'typescript', label: 'TypeScript' },
   { value: 'nodejs', label: 'Node.js' },
-  { value: 'prisma', label: 'Prisma' },
-];
+  { value: 'prisma', label: 'Prisma' }
+]
 
-export default function EditProject({ params }: { params: { projectId: string } }) {
-  const { setProject } = useEditProjectStore();
+export default function EditProject({
+  params
+}: { params: { projectId: string } }) {
+  const { setProject } = useEditProjectStore()
 
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
-    control,
+    control
   } = useForm<EditProjectInput>({
     resolver: zodResolver(editProjectSchema),
     defaultValues: {
@@ -48,9 +50,9 @@ export default function EditProject({ params }: { params: { projectId: string } 
       summary: '',
       skills: [],
       deadline: new Date(),
-      unitPrice: 0,
-    },
-  });
+      unitPrice: 0
+    }
+  })
 
   useEffect(() => {
     // ここではモックデータを使用、実際にはgetの呼び出し
@@ -60,24 +62,23 @@ export default function EditProject({ params }: { params: { projectId: string } 
       summary: 'これはサンプルの概要です',
       skills: ['react', 'typescript'],
       deadline: new Date('2024-12-31'),
-      unitPrice: 50000,
-    };
+      unitPrice: 50000
+    }
 
-    setProject(mockProject);
-    reset(mockProject);
-  }, [params.projectId, setProject, reset]);
+    setProject(mockProject)
+    reset(mockProject)
+  }, [params.projectId, setProject, reset])
 
   const onSubmit = async (data: EditProjectInput) => {
     try {
       // ここに編集APIを実装
-      console.log('送信データ:', data);
+      console.log('送信データ:', data)
     } catch (error) {
-      console.error('エラー:', error);
+      console.error('エラー:', error)
     }
-  };
+  }
 
   return (
-    
     <Container size="md">
       <Stack mb="xl" mt={40}>
         <Title order={2} ta="center">
@@ -141,21 +142,18 @@ export default function EditProject({ params }: { params: { projectId: string } 
               control={control}
               render={({ field }) => (
                 <Box>
-                <Text fw={700} mb={5}>応募締切日 <span style={{ color: 'red' }}>*</span></Text>
-                <DatePicker
-                  value={field.value}
-                  onChange={field.onChange}
-                />
-                {errors.deadline?.message && (
-                  <Text color="red" size="sm" mt={5}>
-                    {errors.deadline.message}
+                  <Text fw={700} mb={5}>
+                    応募締切日 <span style={{ color: 'red' }}>*</span>
                   </Text>
-                )}
-              </Box>
+                  <DatePicker value={field.value} onChange={field.onChange} />
+                  {errors.deadline?.message && (
+                    <Text color="red" size="sm" mt={5}>
+                      {errors.deadline.message}
+                    </Text>
+                  )}
+                </Box>
               )}
             />
-  
-               
 
             <Controller
               name="unitPrice"
@@ -185,5 +183,5 @@ export default function EditProject({ params }: { params: { projectId: string } 
         </form>
       </Box>
     </Container>
-  );
+  )
 }
