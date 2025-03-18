@@ -25,7 +25,6 @@ import { editProjectSchema } from '~/schema/projectEdit'
 import { PROJECTS } from '~/prisma/dummyData'
 import { TESTPROJECTS } from '@/app/projects/_component/ProjectList'
 
-
 // 仮のスキルリスト
 export const AVAILABLE_SKILLS = [
   { value: 'react', label: 'React' },
@@ -58,7 +57,7 @@ export default function EditProject({
   })
 
   // コンポーネント内で直接データを取得
-  const project = TESTPROJECTS.find(p => p.id === params.projectId)
+  const project = TESTPROJECTS.find((p) => p.id === params.projectId)
 
   // コンポーネントマウント時に一度だけ実行
   useEffect(() => {
