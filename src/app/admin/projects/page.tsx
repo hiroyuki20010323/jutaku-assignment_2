@@ -92,7 +92,7 @@ export default function AdminProjects() {
                     color="blue"
                     size="xs"
                     component={Link}
-                    href={`/admin/projects/edit/${project.id}` as RouteLiteral}
+                    href={`/admin/projects/${project.id}/edit` as RouteLiteral}
                   >
                     編集
                   </Button>

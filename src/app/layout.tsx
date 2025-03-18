@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import { TRPCProvider } from '~/lib/trpc/client-api'
 import '@mantine/core/styles.css'
+import '@mantine/dates/styles.css';
 import { Box, ColorSchemeScript, Flex, MantineProvider } from '@mantine/core'
 
 const inter = Inter({ subsets: ['latin'] })
