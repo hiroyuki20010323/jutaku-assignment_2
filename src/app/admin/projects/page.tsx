@@ -83,7 +83,7 @@ export default function AdminProjects() {
                     color="blue"
                     size="xs"
                     component={Link}
-                    href={`/projects/${project.id}` as RouteLiteral}
+                    href={`/admin/projects/${project.id}` as RouteLiteral}
                   >
                     詳細
                   </Button>

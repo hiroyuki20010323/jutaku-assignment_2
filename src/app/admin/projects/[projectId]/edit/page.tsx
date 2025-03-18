@@ -24,7 +24,7 @@ import type { EditProjectInput } from '~/types/projectEdit'
 import { editProjectSchema } from '~/schema/projectEdit'
 
 // 仮のスキルリスト
-const AVAILABLE_SKILLS = [
+export const AVAILABLE_SKILLS = [
   { value: 'react', label: 'React' },
   { value: 'nextjs', label: 'Next.js' },
   { value: 'typescript', label: 'TypeScript' },
