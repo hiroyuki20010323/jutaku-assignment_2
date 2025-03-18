@@ -22,7 +22,6 @@ import { useEffect } from 'react'
 import { useEditProjectStore } from '@/store'
 import type { EditProjectInput } from '~/types/projectEdit'
 import { editProjectSchema } from '~/schema/projectEdit'
-import { PROJECTS } from '~/prisma/dummyData'
 import { TESTPROJECTS } from '@/app/projects/_component/ProjectList'
 
 // 仮のスキルリスト
