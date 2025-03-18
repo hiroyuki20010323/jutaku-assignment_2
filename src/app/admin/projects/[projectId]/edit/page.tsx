@@ -22,6 +22,9 @@ import { useEffect } from 'react'
 import { useEditProjectStore } from '@/store'
 import type { EditProjectInput } from '~/types/projectEdit'
 import { editProjectSchema } from '~/schema/projectEdit'
+import { PROJECTS } from '~/prisma/dummyData'
+import { TESTPROJECTS } from '@/app/projects/_component/ProjectList'
+
 
 // 仮のスキルリスト
 export const AVAILABLE_SKILLS = [
@@ -54,20 +57,18 @@ export default function EditProject({
     }
   })
 
-  useEffect(() => {
-    // ここではモックデータを使用、実際にはgetの呼び出し
-    const mockProject = {
-      id: params.projectId,
-      title: 'サンプルプロジェクト',
-      summary: 'これはサンプルの概要です',
-      skills: ['react', 'typescript'],
-      deadline: new Date('2024-12-31'),
-      unitPrice: 50000
-    }
+  // コンポーネント内で直接データを取得
+  const project = TESTPROJECTS.find(p => p.id === params.projectId)
 
-    setProject(mockProject)
-    reset(mockProject)
-  }, [params.projectId, setProject, reset])
+  // コンポーネントマウント時に一度だけ実行
+  useEffect(() => {
+    if (project) {
+      setProject(project)
+      reset(project)
+    } else {
+      console.error('プロジェクトが見つかりません')
+    }
+  }, []) // 空の依存配列で初回レンダリング時のみ実行
 
   const onSubmit = async (data: EditProjectInput) => {
     try {

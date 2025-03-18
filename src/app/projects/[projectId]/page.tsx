@@ -12,10 +12,11 @@ import {
   Modal,
   Center
 } from '@mantine/core'
-import { PROJECTS } from '../_component/ProjectList'
+
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { useState } from 'react'
+import { TESTPROJECTS } from '../_component/ProjectList'
 
 type ProjectDataProps = {
   params: {
@@ -25,7 +26,7 @@ type ProjectDataProps = {
 
 export default function ProjectDetail({ params }: ProjectDataProps) {
   const [modalOpened, setModalOpened] = useState(false)
-  const project = PROJECTS.find((p) => p.id === params.projectId)
+  const project = TESTPROJECTS.find((p) => p.id === params.projectId)
 
   if (!project) {
     notFound()

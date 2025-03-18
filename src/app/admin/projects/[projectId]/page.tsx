@@ -11,7 +11,7 @@ import {
   Grid
 } from '@mantine/core'
 import Link from 'next/link'
-import { PROJECTS } from '../../../projects/_component/ProjectList'
+import { TESTPROJECTS } from '../../../projects/_component/ProjectList'
 import type { RouteLiteral } from 'nextjs-routes'
 
 // 編集ページと同様にparamsを受け取る
@@ -19,7 +19,7 @@ export default function AdminProjectDetail({
   params
 }: { params: { projectId: string } }) {
   // PROJECTS配列から該当するプロジェクトを直接検索
-  const projectData = PROJECTS.find((p) => p.id === params.projectId)
+  const projectData = TESTPROJECTS.find((p) => p.id === params.projectId)
 
   // データが見つからない場合
   if (!projectData) {

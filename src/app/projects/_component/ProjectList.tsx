@@ -3,7 +3,7 @@ import React from 'react'
 import { Box, Button, Title, Table, Badge, Text } from '@mantine/core'
 import Link from 'next/link'
 import type { RouteLiteral } from 'nextjs-routes'
-export const PROJECTS = [
+export const TESTPROJECTS = [
   {
     id: 'sodfjpadovpo',
     title: 'ECサイトリニューアルプロジェクト',
@@ -57,7 +57,7 @@ export const ProjectList = () => {
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
-          {PROJECTS.map((project) => (
+          {TESTPROJECTS.map((project) => (
             <Table.Tr key={project.id}>
               <Table.Td>
                 {project.createdAt.toLocaleDateString('ja-JP', {

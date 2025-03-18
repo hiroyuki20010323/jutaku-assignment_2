@@ -12,8 +12,9 @@ import {
 } from '@mantine/core'
 import Link from 'next/link'
 import type { RouteLiteral } from 'nextjs-routes'
-import { PROJECTS } from '@/app/projects/_component/ProjectList'
+
 import DeleteProjectModal from './_component/DeleteProjectModal'
+import { TESTPROJECTS } from '@/app/projects/_component/ProjectList'
 
 export default function AdminProjects() {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
@@ -55,7 +56,7 @@ export default function AdminProjects() {
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
-          {PROJECTS.map((project) => (
+          {TESTPROJECTS.map((project) => (
             <Table.Tr key={project.id}>
               <Table.Td>
                 {project.createdAt.toLocaleDateString('ja-JP', {

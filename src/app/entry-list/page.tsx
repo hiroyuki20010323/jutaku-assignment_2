@@ -1,15 +1,16 @@
 'use client'
 import { Box, Title, Table, Container, Button } from '@mantine/core'
 import Link from 'next/link'
-import { PROJECTS } from '../projects/_component/ProjectList'
+import { TESTPROJECTS } from '../projects/_component/ProjectList'
+
 
 const ENTRIES_DATA = [
   {
-    ...PROJECTS[0],
+    ...TESTPROJECTS[0],
     entryDate: new Date('2024-03-15T00:00:00Z')
   },
   {
-    ...PROJECTS[1],
+    ...TESTPROJECTS[1],
     entryDate: new Date('2024-02-28T00:00:00Z')
   }
 ]
