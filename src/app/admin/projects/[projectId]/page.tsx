@@ -8,18 +8,18 @@ import {
   Container,
   Flex,
   Stack,
-  Grid,
+  Grid
 } from '@mantine/core'
 import Link from 'next/link'
 import { PROJECTS } from '../../../projects/_component/ProjectList'
-import { RouteLiteral } from 'nextjs-routes'
+import type { RouteLiteral } from 'nextjs-routes'
 
 // 編集ページと同様にparamsを受け取る
 export default function AdminProjectDetail({
   params
 }: { params: { projectId: string } }) {
   // PROJECTS配列から該当するプロジェクトを直接検索
-  const projectData = PROJECTS.find(p => p.id === params.projectId)
+  const projectData = PROJECTS.find((p) => p.id === params.projectId)
 
   // データが見つからない場合
   if (!projectData) {
@@ -53,35 +53,45 @@ export default function AdminProjectDetail({
       <Box p="xl" style={{ border: '1px solid black', borderRadius: '8px' }}>
         <Grid>
           <Grid.Col span={3}>
-            <Text fw={700} c="gray.6">案件名</Text>
+            <Text fw={700} c="gray.6">
+              案件名
+            </Text>
           </Grid.Col>
           <Grid.Col span={9}>
             <Text>{projectData.title}</Text>
           </Grid.Col>
 
           <Grid.Col span={3}>
-            <Text fw={700} c="gray.6">概要</Text>
+            <Text fw={700} c="gray.6">
+              概要
+            </Text>
           </Grid.Col>
           <Grid.Col span={9}>
             <Text>{projectData.summary}</Text>
           </Grid.Col>
 
           <Grid.Col span={3}>
-            <Text fw={700} c="gray.6">必要なスキル</Text>
+            <Text fw={700} c="gray.6">
+              必要なスキル
+            </Text>
           </Grid.Col>
           <Grid.Col span={9}>
             <Text>{projectData.skills.join(', ')}</Text>
           </Grid.Col>
 
           <Grid.Col span={3}>
-            <Text fw={700} c="gray.6">募集締切</Text>
+            <Text fw={700} c="gray.6">
+              募集締切
+            </Text>
           </Grid.Col>
           <Grid.Col span={9}>
             <Text>{projectData.deadline.toLocaleDateString('ja-JP')}</Text>
           </Grid.Col>
 
           <Grid.Col span={3}>
-            <Text fw={700} c="gray.6">単価</Text>
+            <Text fw={700} c="gray.6">
+              単価
+            </Text>
           </Grid.Col>
           <Grid.Col span={9}>
             <Text>{projectData.unitPrice.toLocaleString()}円</Text>
@@ -99,7 +109,7 @@ export default function AdminProjectDetail({
           </Button>
           <Button
             component={Link}
-            href={`/admin/projects/${projectData.id}/entries`as RouteLiteral}
+            href={`/admin/projects/${projectData.id}/entries` as RouteLiteral}
             color="blue"
             w={200}
           >
