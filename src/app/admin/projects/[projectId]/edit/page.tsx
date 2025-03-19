@@ -184,7 +184,7 @@ export default function EditProject({
             />
 
             <Flex gap="md" justify="center" mt="xl">
-              <Button type="submit" color="blue" w={200}>
+              <Button type="submit" color="blue"  fullWidth >
                 保存
               </Button>
             </Flex>

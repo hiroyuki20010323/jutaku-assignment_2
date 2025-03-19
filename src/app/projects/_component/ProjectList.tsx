@@ -3,6 +3,7 @@ import React from 'react'
 import { Box, Button, Title, Table, Badge, Text } from '@mantine/core'
 import Link from 'next/link'
 import type { RouteLiteral } from 'nextjs-routes'
+// テストデータの型
 type Project = {
   id: string
   title: string
@@ -19,6 +20,7 @@ type Project = {
     username: string
   }[]
 }
+// テストデータ
 export const TESTPROJECTS: Project[] = [
   {
     id: 'sodfjpadovpo',

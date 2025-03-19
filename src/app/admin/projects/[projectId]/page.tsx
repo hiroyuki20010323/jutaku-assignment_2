@@ -15,22 +15,19 @@ import { TESTPROJECTS } from '../../../projects/_component/ProjectList'
 import type { RouteLiteral } from 'nextjs-routes'
 import DeleteProjectModal from '../_component/DeleteProjectModal'
 import EntryListModal from '../_component/EntryListModal'
+import { notFound } from 'next/navigation'
 
 export default function AdminProjectDetail({
   params
 }: { params: { projectId: string } }) {
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+    const [isEntryModalOpen, setIsEntryModalOpen] = useState(false)
+
   const projectData = TESTPROJECTS.find((p) => p.id === params.projectId)
 
   if (!projectData) {
-    return (
-      <Container>
-        <Text>プロジェクトが見つかりません</Text>
-      </Container>
-    )
+      notFound()
   }
-
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
-  const [isEntryModalOpen, setIsEntryModalOpen] = useState(false)
 
   return (
     <Container size="md">
@@ -125,7 +122,7 @@ export default function AdminProjectDetail({
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={() => {
-          // 削除処理を実装
+          //TODO コンポーネントトップレベルでロジック部は別途定義
           console.log('削除処理を実行します')
           setIsDeleteModalOpen(false)
         }}
