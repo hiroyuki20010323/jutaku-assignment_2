@@ -105,8 +105,8 @@ export default function ProjectDetail({ params }: ProjectDataProps) {
           <Box ml={40} mb="lg">
             <Group>
               {project.skills.map((skill) => (
-                <Badge key={skill} variant="outline">
-                  {skill}
+                <Badge key={skill.id} variant="outline">
+                  {skill.name}
                 </Badge>
               ))}
             </Group>

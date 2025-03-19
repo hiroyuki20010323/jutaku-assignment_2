@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, { useState } from 'react'
 import {
   Box,
   Button,
@@ -8,20 +8,22 @@ import {
   Container,
   Flex,
   Stack,
-  Grid
+  Table
 } from '@mantine/core'
 import Link from 'next/link'
 import { TESTPROJECTS } from '../../../projects/_component/ProjectList'
 import type { RouteLiteral } from 'nextjs-routes'
+import DeleteProjectModal from '../_component/DeleteProjectModal'
+import EntryListModal from '../_component/EntryListModal'
 
-// 編集ページと同様にparamsを受け取る
+
 export default function AdminProjectDetail({
   params
 }: { params: { projectId: string } }) {
-  // PROJECTS配列から該当するプロジェクトを直接検索
+  
   const projectData = TESTPROJECTS.find((p) => p.id === params.projectId)
 
-  // データが見つからない場合
+  
   if (!projectData) {
     return (
       <Container>
@@ -29,6 +31,10 @@ export default function AdminProjectDetail({
       </Container>
     )
   }
+
+  
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [isEntryModalOpen, setIsEntryModalOpen] = useState(false)
 
   return (
     <Container size="md">
@@ -43,6 +49,7 @@ export default function AdminProjectDetail({
               href="/admin/projects"
               variant="filled"
               color="blue"
+              w={100}
             >
               戻る
             </Button>
@@ -50,83 +57,95 @@ export default function AdminProjectDetail({
         </Box>
       </Stack>
 
-      <Box p="xl" style={{ border: '1px solid black', borderRadius: '8px' }}>
-        <Grid>
-          <Grid.Col span={3}>
-            <Text fw={700} c="gray.6">
+      <Table variant="vertical" layout="fixed" withTableBorder>
+        <Table.Tbody>
+          
+          <Table.Tr>
+            <Table.Td bg="blue.1" align="center" w="20%" p="sm">
               案件名
-            </Text>
-          </Grid.Col>
-          <Grid.Col span={9}>
-            <Text>{projectData.title}</Text>
-          </Grid.Col>
+            </Table.Td>
+            <Table.Td p="sm">{projectData.title}</Table.Td>
+          </Table.Tr>
 
-          <Grid.Col span={3}>
-            <Text fw={700} c="gray.6">
+          
+          <Table.Tr>
+            <Table.Td bg="blue.1" align="center" p="sm">
               概要
-            </Text>
-          </Grid.Col>
-          <Grid.Col span={9}>
-            <Text>{projectData.summary}</Text>
-          </Grid.Col>
+            </Table.Td>
+            <Table.Td p="sm">{projectData.summary}</Table.Td>
+          </Table.Tr>
 
-          <Grid.Col span={3}>
-            <Text fw={700} c="gray.6">
+          
+          <Table.Tr>
+            <Table.Td bg="blue.1" align="center" p="sm">
               必要なスキル
-            </Text>
-          </Grid.Col>
-          <Grid.Col span={9}>
-            <Text>{projectData.skills.join(', ')}</Text>
-          </Grid.Col>
+            </Table.Td>
+            <Table.Td p="sm">
+              {projectData.skills.map(skill => skill.name).join(', ')}
+            </Table.Td>
+          </Table.Tr>
 
-          <Grid.Col span={3}>
-            <Text fw={700} c="gray.6">
+          
+          <Table.Tr>
+            <Table.Td bg="blue.1" align="center" p="sm">
               募集締切
-            </Text>
-          </Grid.Col>
-          <Grid.Col span={9}>
-            <Text>{projectData.deadline.toLocaleDateString('ja-JP')}</Text>
-          </Grid.Col>
+            </Table.Td>
+            <Table.Td p="sm">
+              {projectData.deadline.toLocaleDateString('ja-JP', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                timeZone: 'Asia/Tokyo'
+              })}
+            </Table.Td>
+          </Table.Tr>
 
-          <Grid.Col span={3}>
-            <Text fw={700} c="gray.6">
+          
+          <Table.Tr>
+            <Table.Td bg="blue.1" align="center" p="sm">
               単価
-            </Text>
-          </Grid.Col>
-          <Grid.Col span={9}>
-            <Text>{projectData.unitPrice.toLocaleString()}円</Text>
-          </Grid.Col>
-        </Grid>
+            </Table.Td>
+            <Table.Td p="sm">
+              {projectData.unitPrice.toLocaleString()}円
+            </Table.Td>
+          </Table.Tr>
+        </Table.Tbody>
+      </Table>
 
-        <Flex gap="md" justify="center" mt="xl">
-          <Button
-            component={Link}
-            href={`/admin/projects/${projectData.id}/edit` as RouteLiteral}
-            color="blue"
-            w={200}
-          >
-            編集する
-          </Button>
-          <Button
-            component={Link}
-            href={`/admin/projects/${projectData.id}/entries` as RouteLiteral}
-            color="blue"
-            w={200}
-          >
-            この案件のエントリー一覧を見る
-          </Button>
-          <Button
-            color="red"
-            w={200}
-            onClick={() => {
-              // 削除処理を実装
-              console.log('削除ボタンがクリックされました')
-            }}
-          >
-            この案件を削除する
-          </Button>
-        </Flex>
-      </Box>
+      <Stack align="center" mt="xl" gap="md">
+        <Button
+          component={Link}
+          href={`/admin/projects/${projectData.id}/edit` as RouteLiteral}
+          color="blue"
+          w={400}
+        >
+          編集する
+        </Button>
+        <Button color="blue" w={400} onClick={() => setIsEntryModalOpen(true)}>
+          この案件のエントリー一覧を見る
+        </Button>
+        <Button color="red" w={400} onClick={() => setIsDeleteModalOpen(true)}>
+          この案件を削除する
+        </Button>
+      </Stack>
+
+      {/* 削除確認モーダル */}
+      <DeleteProjectModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={() => {
+          // 削除処理を実装
+          console.log('削除処理を実行します')
+          setIsDeleteModalOpen(false)
+        }}
+      />
+
+      {/* エントリー一覧モーダル */}
+      <EntryListModal
+        isOpen={isEntryModalOpen}
+        onClose={() => setIsEntryModalOpen(false)}
+        entryUsers={projectData.entryUsers}
+      />
     </Container>
   )
 }

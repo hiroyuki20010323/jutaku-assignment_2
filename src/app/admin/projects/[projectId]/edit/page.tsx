@@ -17,7 +17,7 @@ import {
 } from '@mantine/core'
 import Link from 'next/link'
 import { Controller } from 'react-hook-form'
-import { DatePicker } from '@mantine/dates'
+import { DateInput } from '@mantine/dates'
 import { useEffect } from 'react'
 import { useEditProjectStore } from '@/store'
 import type { EditProjectInput } from '~/types/projectEdit'
@@ -58,19 +58,25 @@ export default function EditProject({
   // コンポーネント内で直接データを取得
   const project = TESTPROJECTS.find((p) => p.id === params.projectId)
 
-  // コンポーネントマウント時に一度だけ実行
+  
   useEffect(() => {
     if (project) {
-      setProject(project)
-      reset(project)
+      setProject({
+        ...project,
+        skills: project.skills.map((skill) => skill.name)
+      })
+      reset({
+        ...project,
+        skills: project.skills.map((skill) => skill.name)
+      })
     } else {
       console.error('プロジェクトが見つかりません')
     }
-  }, []) // 空の依存配列で初回レンダリング時のみ実行
+  }, []) 
 
   const onSubmit = async (data: EditProjectInput) => {
     try {
-      // ここに編集APIを実装
+      
       console.log('送信データ:', data)
     } catch (error) {
       console.error('エラー:', error)
@@ -90,6 +96,7 @@ export default function EditProject({
               href="/admin/projects"
               variant="contained"
               color="blue"
+              w={100}
             >
               戻る
             </Button>
@@ -144,7 +151,12 @@ export default function EditProject({
                   <Text fw={700} mb={5}>
                     応募締切日 <span style={{ color: 'red' }}>*</span>
                   </Text>
-                  <DatePicker value={field.value} onChange={field.onChange} />
+                  <DateInput
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder="締切日を選択"
+                    valueFormat="YYYY/MM/DD"
+                  />
                   {errors.deadline?.message && (
                     <Text color="red" size="sm" mt={5}>
                       {errors.deadline.message}

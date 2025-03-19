@@ -30,8 +30,8 @@ export default function AdminProjects() {
         案件一覧
       </Title>
       <Box style={{ display: 'flex', justifyContent: 'flex-end' }} mb={40}>
-        <Button component={Link} href="/entry-list">
-          エントリー一覧
+        <Button component={Link} href="/admin/projects/new">
+          新規案件作成
         </Button>
       </Box>
 
@@ -72,8 +72,8 @@ export default function AdminProjects() {
               </Table.Td>
               <Table.Td>
                 {project.skills.map((skill) => (
-                  <Badge key={skill} mr="xs" mb="xs" variant="outline">
-                    {skill}
+                  <Badge key={skill.id} mr="xs" mb="xs" variant="outline">
+                    {skill.name}
                   </Badge>
                 ))}
               </Table.Td>
