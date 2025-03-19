@@ -20,7 +20,6 @@ import { DateInput } from '@mantine/dates'
 import { z } from 'zod'
 import { useCreateProjectStore } from '@/store'
 
-
 const createProjectSchema = z.object({
   title: z.string().min(1, '案件名は必須です'),
   summary: z.string().min(1, '概要は必須です'),
@@ -84,7 +83,6 @@ export default function CreateProject() {
               variant="contained"
               color="blue"
               w={100}
-
             >
               戻る
             </Button>

@@ -58,7 +58,6 @@ export default function EditProject({
   // コンポーネント内で直接データを取得
   const project = TESTPROJECTS.find((p) => p.id === params.projectId)
 
-  
   useEffect(() => {
     if (project) {
       setProject({
@@ -72,11 +71,10 @@ export default function EditProject({
     } else {
       console.error('プロジェクトが見つかりません')
     }
-  }, []) 
+  }, [])
 
   const onSubmit = async (data: EditProjectInput) => {
     try {
-      
       console.log('送信データ:', data)
     } catch (error) {
       console.error('エラー:', error)

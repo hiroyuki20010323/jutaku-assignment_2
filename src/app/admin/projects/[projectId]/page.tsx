@@ -16,14 +16,11 @@ import type { RouteLiteral } from 'nextjs-routes'
 import DeleteProjectModal from '../_component/DeleteProjectModal'
 import EntryListModal from '../_component/EntryListModal'
 
-
 export default function AdminProjectDetail({
   params
 }: { params: { projectId: string } }) {
-  
   const projectData = TESTPROJECTS.find((p) => p.id === params.projectId)
 
-  
   if (!projectData) {
     return (
       <Container>
@@ -32,7 +29,6 @@ export default function AdminProjectDetail({
     )
   }
 
-  
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [isEntryModalOpen, setIsEntryModalOpen] = useState(false)
 
@@ -59,7 +55,6 @@ export default function AdminProjectDetail({
 
       <Table variant="vertical" layout="fixed" withTableBorder>
         <Table.Tbody>
-          
           <Table.Tr>
             <Table.Td bg="blue.1" align="center" w="20%" p="sm">
               案件名
@@ -67,7 +62,6 @@ export default function AdminProjectDetail({
             <Table.Td p="sm">{projectData.title}</Table.Td>
           </Table.Tr>
 
-          
           <Table.Tr>
             <Table.Td bg="blue.1" align="center" p="sm">
               概要
@@ -75,17 +69,15 @@ export default function AdminProjectDetail({
             <Table.Td p="sm">{projectData.summary}</Table.Td>
           </Table.Tr>
 
-          
           <Table.Tr>
             <Table.Td bg="blue.1" align="center" p="sm">
               必要なスキル
             </Table.Td>
             <Table.Td p="sm">
-              {projectData.skills.map(skill => skill.name).join(', ')}
+              {projectData.skills.map((skill) => skill.name).join(', ')}
             </Table.Td>
           </Table.Tr>
 
-          
           <Table.Tr>
             <Table.Td bg="blue.1" align="center" p="sm">
               募集締切
@@ -100,7 +92,6 @@ export default function AdminProjectDetail({
             </Table.Td>
           </Table.Tr>
 
-          
           <Table.Tr>
             <Table.Td bg="blue.1" align="center" p="sm">
               単価

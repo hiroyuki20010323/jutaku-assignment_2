@@ -9,7 +9,6 @@ type UserAction = {
   setUser: (user: UserState['user']) => void
 }
 
-
 type Project = {
   id: string
   title: string
@@ -37,8 +36,6 @@ export const useUserStore = create<UserState & UserAction>((set) => ({
   setUser: (user) => set({ user })
 }))
 
-
-
 export const useEditProjectStore = create<EditProjectStore>()(
   persist(
     (set) => ({
@@ -52,7 +49,6 @@ export const useEditProjectStore = create<EditProjectStore>()(
     }
   )
 )
-
 
 export const useCreateProjectStore = create<CreateProjectStore>()(
   persist(
