@@ -172,7 +172,7 @@ export default function CreateProject() {
             />
 
             <Flex gap="md" justify="center" mt="xl">
-              <Button type="submit" color="blue"  fullWidth >
+              <Button type="submit" color="blue" fullWidth>
                 登録
               </Button>
             </Flex>

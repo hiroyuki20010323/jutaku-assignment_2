@@ -20,13 +20,13 @@ import { notFound } from 'next/navigation'
 export default function AdminProjectDetail({
   params
 }: { params: { projectId: string } }) {
-    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
-    const [isEntryModalOpen, setIsEntryModalOpen] = useState(false)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [isEntryModalOpen, setIsEntryModalOpen] = useState(false)
 
   const projectData = TESTPROJECTS.find((p) => p.id === params.projectId)
 
   if (!projectData) {
-      notFound()
+    notFound()
   }
 
   return (
