@@ -19,13 +19,11 @@ import Link from 'next/link'
 import { DateInput } from '@mantine/dates'
 import { useCreateProjectStore } from '@/store'
 import { createProjectSchema } from '~/schema/project'
-import { CreateProjectInput } from '~/types/project'
+import type { CreateProjectInput } from '~/types/project'
 import { AVAILABLE_SKILLS } from '../[projectId]/edit/page'
-
 
 export default function CreateProject() {
   const { addProject } = useCreateProjectStore()
-
 
   const {
     register,
@@ -45,20 +43,18 @@ export default function CreateProject() {
 
   const onSubmit = (data: CreateProjectInput) => {
     try {
-  // TODO この辺りのロジックも実際はDBに保存だからAPI実装時に消す
-      
+      // TODO この辺りのロジックも実際はDBに保存だからAPI実装時に消す
 
-      const formattedSkills = data.skills.map(skillName => {
-        
-        const availableSkill = AVAILABLE_SKILLS.find(s => s.name === skillName)
-        
-        
-        return availableSkill 
+      const formattedSkills = data.skills.map((skillName) => {
+        const availableSkill = AVAILABLE_SKILLS.find(
+          (s) => s.name === skillName
+        )
+
+        return availableSkill
           ? { id: availableSkill.id, name: availableSkill.name }
           : { id: `skill-${crypto.randomUUID().slice(0, 8)}`, name: skillName }
       })
-      
-      
+
       const newProject = {
         id: crypto.randomUUID(),
         title: data.title,
@@ -68,16 +64,13 @@ export default function CreateProject() {
         unitPrice: data.unitPrice,
         entryUsers: []
       }
-      
-      
+
       addProject(newProject)
-      
-      
+
       setTimeout(() => {
         const currentState = useCreateProjectStore.getState()
         console.log('保存されたプロジェクト一覧:', currentState.projects)
       }, 100)
-      
     } catch (error) {
       console.error('プロジェクト作成エラー:', error)
     }

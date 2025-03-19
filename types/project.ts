@@ -6,7 +6,6 @@ export type EditProjectInput = z.infer<typeof editProjectSchema>
 // 作成用
 export type CreateProjectInput = z.infer<typeof createProjectSchema>
 
-
 // テストデータ用の型
 export type TestProject = {
   id: string
@@ -30,14 +29,12 @@ export type Project = {
   id: string
   title: string
   summary: string
-  skills: { id: string 
-    name: string }[]
+  skills: { id: string; name: string }[]
   deadline: Date
   createdAt?: Date
   unitPrice: number
   entryUsers?: { id: string; username: string }[]
 }
-
 
 export type CreateProjectStore = {
   projects: Project[]
@@ -49,4 +46,3 @@ export type EditProjectStore = {
   setProject: (project: Project) => void
   clearProject: () => void
 }
-

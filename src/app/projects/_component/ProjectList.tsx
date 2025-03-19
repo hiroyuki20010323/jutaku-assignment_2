@@ -3,7 +3,7 @@ import React from 'react'
 import { Box, Button, Title, Table, Badge, Text } from '@mantine/core'
 import Link from 'next/link'
 import type { RouteLiteral } from 'nextjs-routes'
-import { TestProject } from '~/types/project'
+import type { TestProject } from '~/types/project'
 
 // テストデータ
 export const TESTPROJECTS: TestProject[] = [
