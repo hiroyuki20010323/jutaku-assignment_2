@@ -62,11 +62,11 @@ export default function CreateProject() {
   })
 
   const onSubmit = (data: CreateProjectInput) => {
-    addProject({
-      id: crypto.randomUUID(),
-      ...data,
-      createdAt: new Date()
-    })
+    // addProject({
+    //   id: crypto.randomUUID(),
+    //   ...data,
+    //   createdAt: new Date()
+    // })
   }
 
   return (

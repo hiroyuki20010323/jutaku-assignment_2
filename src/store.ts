@@ -13,10 +13,10 @@ type Project = {
   id: string
   title: string
   summary: string
-  skills: string[]
+  skills: { id: string; name: string }[]
   deadline: Date
   unitPrice: number
-  createdAt: Date
+  entryUsers?: { id: string; username: string }[]
 }
 
 type CreateProjectStore = {
@@ -25,7 +25,7 @@ type CreateProjectStore = {
 }
 
 type EditProjectStore = {
-  project: Project | null
+  projectData: Project | null
   setProject: (project: Project) => void
   clearProject: () => void
 }
@@ -36,20 +36,21 @@ export const useUserStore = create<UserState & UserAction>((set) => ({
   setUser: (user) => set({ user })
 }))
 
+// プロジェクト編集データ保存
 export const useEditProjectStore = create<EditProjectStore>()(
   persist(
     (set) => ({
-      project: null,
-      setProject: (project) => set({ project }),
-      clearProject: () => set({ project: null })
+      projectData: null,
+      setProject: (project) => set({ projectData: project }),
+      clearProject: () => set({ projectData: null })
     }),
     {
-      name: 'edit-project-storage',
-      storage: createJSONStorage(() => localStorage)
+      name: 'edit-project-storage'
     }
   )
 )
 
+// プロジェクト作成データ保存
 export const useCreateProjectStore = create<CreateProjectStore>()(
   persist(
     (set) => ({
@@ -60,8 +61,7 @@ export const useCreateProjectStore = create<CreateProjectStore>()(
         }))
     }),
     {
-      name: 'create-project-storage',
-      storage: createJSONStorage(() => localStorage)
+      name: 'create-project-storage'
     }
   )
 )
