@@ -12,7 +12,6 @@ import {
 } from '@mantine/core'
 import Link from 'next/link'
 import type { RouteLiteral } from 'nextjs-routes'
-
 import DeleteProjectModal from './_component/DeleteProjectModal'
 import { TESTPROJECTS } from '@/app/projects/_component/ProjectList'
 

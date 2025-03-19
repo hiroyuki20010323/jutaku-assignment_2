@@ -3,25 +3,10 @@ import React from 'react'
 import { Box, Button, Title, Table, Badge, Text } from '@mantine/core'
 import Link from 'next/link'
 import type { RouteLiteral } from 'nextjs-routes'
-// テストデータの型
-type Project = {
-  id: string
-  title: string
-  summary: string
-  deadline: Date
-  unitPrice: number
-  skills: {
-    id: string
-    name: string
-  }[]
-  createdAt: Date
-  entryUsers: {
-    id: string
-    username: string
-  }[]
-}
+import { TestProject } from '~/types/project'
+
 // テストデータ
-export const TESTPROJECTS: Project[] = [
+export const TESTPROJECTS: TestProject[] = [
   {
     id: 'sodfjpadovpo',
     title: 'ECサイトリニューアルプロジェクト',

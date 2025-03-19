@@ -4,7 +4,6 @@ import {
   Box,
   Button,
   Title,
-  Text,
   Container,
   Flex,
   Stack,

@@ -3,6 +3,7 @@ import { Box, Title, Table, Container, Button } from '@mantine/core'
 import Link from 'next/link'
 import { TESTPROJECTS } from '../projects/_component/ProjectList'
 
+// エントリーした日を追加したテストデータ
 const ENTRIES_DATA = [
   {
     ...TESTPROJECTS[0],

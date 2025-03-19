@@ -17,33 +17,15 @@ import {
 } from '@mantine/core'
 import Link from 'next/link'
 import { DateInput } from '@mantine/dates'
-import { z } from 'zod'
 import { useCreateProjectStore } from '@/store'
+import { createProjectSchema } from '~/schema/project'
+import { CreateProjectInput } from '~/types/project'
+import { AVAILABLE_SKILLS } from '../[projectId]/edit/page'
 
-const createProjectSchema = z.object({
-  title: z.string().min(1, '案件名は必須です'),
-  summary: z.string().min(1, '概要は必須です'),
-  skills: z.array(z.string()).min(1, '少なくとも1つのスキルを選択してください'),
-  deadline: z.date({
-    required_error: '締切日は必須です',
-    invalid_type_error: '有効な日付を入力してください'
-  }),
-  unitPrice: z.number().min(1, '単価は必須です')
-})
-
-type CreateProjectInput = z.infer<typeof createProjectSchema>
-
-// 仮のスキルリスト
-const AVAILABLE_SKILLS = [
-  { value: 'react', label: 'React' },
-  { value: 'nextjs', label: 'Next.js' },
-  { value: 'typescript', label: 'TypeScript' },
-  { value: 'nodejs', label: 'Node.js' },
-  { value: 'prisma', label: 'Prisma' }
-]
 
 export default function CreateProject() {
   const { addProject } = useCreateProjectStore()
+
 
   const {
     register,
@@ -62,11 +44,43 @@ export default function CreateProject() {
   })
 
   const onSubmit = (data: CreateProjectInput) => {
-    // addProject({
-    //   id: crypto.randomUUID(),
-    //   ...data,
-    //   createdAt: new Date()
-    // })
+    try {
+  // TODO この辺りのロジックも実際はDBに保存だからAPI実装時に消す
+      
+
+      const formattedSkills = data.skills.map(skillName => {
+        
+        const availableSkill = AVAILABLE_SKILLS.find(s => s.name === skillName)
+        
+        
+        return availableSkill 
+          ? { id: availableSkill.id, name: availableSkill.name }
+          : { id: `skill-${crypto.randomUUID().slice(0, 8)}`, name: skillName }
+      })
+      
+      
+      const newProject = {
+        id: crypto.randomUUID(),
+        title: data.title,
+        summary: data.summary,
+        skills: formattedSkills,
+        deadline: data.deadline,
+        unitPrice: data.unitPrice,
+        entryUsers: []
+      }
+      
+      
+      addProject(newProject)
+      
+      
+      setTimeout(() => {
+        const currentState = useCreateProjectStore.getState()
+        console.log('保存されたプロジェクト一覧:', currentState.projects)
+      }, 100)
+      
+    } catch (error) {
+      console.error('プロジェクト作成エラー:', error)
+    }
   }
 
   return (
@@ -120,7 +134,7 @@ export default function CreateProject() {
                   label="必要なスキル"
                   styles={{ label: { fontWeight: 700 } }}
                   placeholder="スキルを選択"
-                  data={AVAILABLE_SKILLS}
+                  data={AVAILABLE_SKILLS.map((skill) => skill.name)}
                   error={errors.skills?.message}
                   required
                   value={field.value}
@@ -163,10 +177,9 @@ export default function CreateProject() {
                   error={errors.unitPrice?.message}
                   required
                   min={0}
-                  step={1000}
                   hideControls
                   value={field.value}
-                  onChange={field.onChange}
+                  onChange={(val) => field.onChange(val || 0)}
                 />
               )}
             />

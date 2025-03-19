@@ -34,7 +34,7 @@ export default function ProjectDetail({ params }: ProjectDataProps) {
 
   return (
     <Container size="lg" py="xl">
-      {/* モーダル */}
+      {/* エントリリー成功モーダル */}
       <Modal
         opened={modalOpened}
         onClose={() => setModalOpened(false)}

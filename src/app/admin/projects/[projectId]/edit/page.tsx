@@ -20,8 +20,8 @@ import { Controller } from 'react-hook-form'
 import { DateInput } from '@mantine/dates'
 import { useEffect, useState } from 'react'
 import { useEditProjectStore } from '@/store'
-import type { EditProjectInput } from '~/types/projectEdit'
-import { editProjectSchema } from '~/schema/projectEdit'
+import type { EditProjectInput } from '~/types/project'
+import { editProjectSchema } from '~/schema/project'
 import { TESTPROJECTS } from '@/app/projects/_component/ProjectList'
 
 // スキルリストをProject型に合わせた形式に変更
@@ -57,7 +57,7 @@ export default function EditProject({
   })
 
   useEffect(() => {
-    // ローカルストレージからのデータ取得が非同期で、テストデータが優先されてしまうから、取得待って表示させる
+    //TODO ローカルストレージからのデータ取得が非同期で、テストデータが優先されてしまうから、取得待って表示させる
     // API実装の過程でこの辺りは不要になると思われる。。。　onSubmitなども同様
     const loadData = async () => {
       setIsLoading(true)

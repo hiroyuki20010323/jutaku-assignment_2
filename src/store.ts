@@ -1,6 +1,7 @@
 import type { User } from '@supabase/supabase-js'
 import { create } from 'zustand'
-import { persist, createJSONStorage } from 'zustand/middleware'
+import { persist } from 'zustand/middleware'
+import { CreateProjectStore, EditProjectStore } from '~/types/project'
 
 type UserState = {
   user: User | null
@@ -9,26 +10,6 @@ type UserAction = {
   setUser: (user: UserState['user']) => void
 }
 
-type Project = {
-  id: string
-  title: string
-  summary: string
-  skills: { id: string; name: string }[]
-  deadline: Date
-  unitPrice: number
-  entryUsers?: { id: string; username: string }[]
-}
-
-type CreateProjectStore = {
-  projects: Project[]
-  addProject: (project: Project) => void
-}
-
-type EditProjectStore = {
-  projectData: Project | null
-  setProject: (project: Project) => void
-  clearProject: () => void
-}
 
 // stateの定義と更新ロジックを含むストアを作成。
 export const useUserStore = create<UserState & UserAction>((set) => ({

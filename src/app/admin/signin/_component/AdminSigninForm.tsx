@@ -2,7 +2,6 @@
 import { Box, Button, PasswordInput, TextInput } from '@mantine/core'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-
 import { signin } from '@/serverActions/supabaseAuth'
 import type { SignInFormData } from '~/types/auth'
 import { signInSchema } from '~/schema/auth'
