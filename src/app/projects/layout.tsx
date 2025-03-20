@@ -5,7 +5,7 @@ export default function ProjectsLayout({
   children
 }: { readonly children: ReactNode }) {
   return (
-    <Container size="responsive" maw="1100" pt="5rem">
+    <Container size="responsive" maw="1100">
       {children}
     </Container>
   )
