@@ -3,7 +3,7 @@ import type { createProjectSchema, editProjectSchema } from '~/schema/project'
 
 // プロジェクト編集用のzod型
 export type EditProjectInput = z.infer<typeof editProjectSchema>
-// 作成用
+// プロジェクト作成用
 export type CreateProjectInput = z.infer<typeof createProjectSchema>
 
 // テストデータ用の型
@@ -36,6 +36,7 @@ export type Project = {
   entryUsers?: { id: string; username: string }[]
 }
 
+// zustand
 export type CreateProjectStore = {
   projects: Project[]
   addProject: (project: Project) => void

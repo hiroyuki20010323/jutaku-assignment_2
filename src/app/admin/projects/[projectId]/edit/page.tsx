@@ -160,7 +160,7 @@ export default function EditProject({
             style={{ border: '1px solid black', borderRadius: '8px' }}
           >
             <form onSubmit={handleSubmit(onSubmit)}>
-              <Stack gap="lg">
+              <Stack gap="xl">
                 <TextInput
                   label="案件名"
                   styles={{ label: { fontWeight: 700 } }}
@@ -202,7 +202,7 @@ export default function EditProject({
                   control={control}
                   render={({ field }) => (
                     <Box>
-                      <Text fw={700} mb={5}>
+                      <Text fw={700} mb={8}>
                         応募締切日 <span style={{ color: 'red' }}>*</span>
                       </Text>
                       <DateInput
@@ -212,7 +212,7 @@ export default function EditProject({
                         valueFormat="YYYY/MM/DD"
                       />
                       {errors.deadline?.message && (
-                        <Text color="red" size="sm" mt={5}>
+                        <Text color="red" size="sm" mt={8}>
                           {errors.deadline.message}
                         </Text>
                       )}

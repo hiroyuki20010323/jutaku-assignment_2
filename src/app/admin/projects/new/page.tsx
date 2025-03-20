@@ -99,7 +99,7 @@ export default function CreateProject() {
 
       <Box p="xl" style={{ border: '1px solid black', borderRadius: '8px' }}>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Stack gap="lg">
+          <Stack gap="xl">
             <TextInput
               label="案件名"
               styles={{ label: { fontWeight: 700 } }}
@@ -141,7 +141,7 @@ export default function CreateProject() {
               control={control}
               render={({ field }) => (
                 <Box>
-                  <Text fw={700} mb={5}>
+                  <Text fw={700} mb={8}>
                     応募締切日 <span style={{ color: 'red' }}>*</span>
                   </Text>
                   <DateInput
@@ -151,7 +151,7 @@ export default function CreateProject() {
                     valueFormat="YYYY/MM/DD"
                   />
                   {errors.deadline?.message && (
-                    <Text color="red" size="sm" mt={5}>
+                    <Text color="red" size="sm" mt={8}>
                       {errors.deadline.message}
                     </Text>
                   )}
@@ -177,7 +177,7 @@ export default function CreateProject() {
               )}
             />
 
-            <Flex gap="md" justify="center" mt="xl">
+            <Flex gap="md" justify="center" mt={40}>
               <Button type="submit" color="blue" fullWidth>
                 登録
               </Button>

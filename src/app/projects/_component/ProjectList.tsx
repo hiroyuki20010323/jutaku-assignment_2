@@ -95,10 +95,11 @@ export const ProjectList = () => {
                 <Text lineClamp={1}>{project.summary}</Text>
               </Table.Td>
               <Table.Td>
-                {project.skills.map((skill) => (
-                  <Badge key={skill.id} mr="xs" mb="xs" variant="outline">
+                {project.skills.map((skill, index) => (
+                  <Text key={skill.id} component="span" mr="xs" mb="xs">
                     {skill.name}
-                  </Badge>
+                    {index < project.skills.length - 1 ? ', ' : ''}
+                  </Text>
                 ))}
               </Table.Td>
               <Table.Td ta="center">
