@@ -5,7 +5,6 @@ import {
   Text,
   Paper,
   Group,
-  Badge,
   Button,
   Container,
   Flex,
@@ -57,7 +56,7 @@ export default function ProjectDetail({ params }: ProjectDataProps) {
       </Modal>
       {/* モーダル */}
 
-      <Title order={2} ta="center" mb="md">
+      <Title order={2} ta="center" mb="md" mt={16}>
         案件詳細
       </Title>
 
@@ -74,7 +73,7 @@ export default function ProjectDetail({ params }: ProjectDataProps) {
           <Text fw={700} mb="xs">
             案件作成日
           </Text>
-          <Box ml={40} mb="lg">
+          <Box ml={40} mb="xl">
             <Text suppressHydrationWarning>
               {project.createdAt.toLocaleDateString('ja-JP', {
                 year: 'numeric',
@@ -88,26 +87,27 @@ export default function ProjectDetail({ params }: ProjectDataProps) {
           <Text fw={700} mb="xs">
             案件名
           </Text>
-          <Box ml={40} mb="lg">
+          <Box ml={40} mb="xl">
             <Text>{project.title}</Text>
           </Box>
 
           <Text fw={700} mb="xs">
             案件詳細
           </Text>
-          <Box ml={40} mb="lg">
+          <Box ml={40} mb="xl">
             <Text>{project.summary}</Text>
           </Box>
 
           <Text fw={700} mb="xs">
             必要なスキル
           </Text>
-          <Box ml={40} mb="lg">
+          <Box ml={40} mb="xl">
             <Group>
-              {project.skills.map((skill) => (
-                <Badge key={skill.id} variant="outline">
+              {project.skills.map((skill, index) => (
+                <Text key={skill.id} component="span" mr="xs" mb="xs">
                   {skill.name}
-                </Badge>
+                  {index < project.skills.length - 1 ? ', ' : ''}
+                </Text>
               ))}
             </Group>
           </Box>
@@ -115,7 +115,7 @@ export default function ProjectDetail({ params }: ProjectDataProps) {
           <Text fw={700} mb="xs">
             募集締切
           </Text>
-          <Box ml={40} mb="lg">
+          <Box ml={40} mb="xl">
             <Text suppressHydrationWarning>
               {project.deadline.toLocaleDateString('ja-JP', {
                 year: 'numeric',
@@ -129,7 +129,7 @@ export default function ProjectDetail({ params }: ProjectDataProps) {
           <Text fw={700} mb="xs">
             単価
           </Text>
-          <Box ml={40} mb="lg">
+          <Box ml={40} mb="xl">
             <Text>¥{project.unitPrice.toLocaleString()}</Text>
           </Box>
         </Box>
@@ -137,7 +137,7 @@ export default function ProjectDetail({ params }: ProjectDataProps) {
         <Button
           fullWidth
           color="blue"
-          mt="xl"
+          mt={80}
           size="md"
           onClick={() => setModalOpened(true)}
         >

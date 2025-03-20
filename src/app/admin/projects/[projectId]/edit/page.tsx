@@ -187,12 +187,15 @@ export default function EditProject({
                     <MultiSelect
                       label="必要なスキル"
                       styles={{ label: { fontWeight: 700 } }}
-                      placeholder="スキルを選択"
+                      placeholder={
+                        field.value.length === 0 ? 'スキルを選択' : undefined
+                      }
                       data={AVAILABLE_SKILLS.map((skill) => skill.name)}
                       error={errors.skills?.message}
                       required
                       value={field.value}
                       onChange={field.onChange}
+                      hidePickedOptions
                     />
                   )}
                 />
@@ -231,7 +234,6 @@ export default function EditProject({
                       error={errors.unitPrice?.message}
                       required
                       min={0}
-                      step={1000}
                       hideControls
                       value={field.value}
                       onChange={field.onChange}

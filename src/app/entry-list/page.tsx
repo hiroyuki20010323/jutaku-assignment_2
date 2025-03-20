@@ -17,7 +17,7 @@ const ENTRIES_DATA = [
 
 export default function EntryList() {
   return (
-    <Container size="lg" py="xl">
+    <Container size="lg" py="xl" mt={80}>
       <Box mb="xl">
         <Title order={2} ta="center">
           エントリー済み一覧

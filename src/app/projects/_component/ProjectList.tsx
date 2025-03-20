@@ -50,7 +50,7 @@ export const TESTPROJECTS: TestProject[] = [
 export const ProjectList = () => {
   return (
     <>
-      <Title order={2} ta="center" mb="lg">
+      <Title order={2} ta="center" mb="lg" mt={80}>
         案件一覧
       </Title>
       <Box style={{ display: 'flex', justifyContent: 'flex-end' }} mb={40}>
@@ -82,7 +82,7 @@ export const ProjectList = () => {
         <Table.Tbody>
           {TESTPROJECTS.map((project) => (
             <Table.Tr key={project.id}>
-              <Table.Td>
+              <Table.Td ta="center">
                 {project.createdAt.toLocaleDateString('ja-JP', {
                   year: 'numeric',
                   month: '2-digit',
@@ -90,11 +90,11 @@ export const ProjectList = () => {
                   timeZone: 'Asia/Tokyo'
                 })}
               </Table.Td>
-              <Table.Td>{project.title}</Table.Td>
-              <Table.Td>
+              <Table.Td ta="center">{project.title}</Table.Td>
+              <Table.Td ta="center">
                 <Text lineClamp={1}>{project.summary}</Text>
               </Table.Td>
-              <Table.Td>
+              <Table.Td ta="center">
                 {project.skills.map((skill, index) => (
                   <Text key={skill.id} component="span" mr="xs" mb="xs">
                     {skill.name}

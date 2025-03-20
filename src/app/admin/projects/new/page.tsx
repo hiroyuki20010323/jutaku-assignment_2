@@ -126,12 +126,15 @@ export default function CreateProject() {
                 <MultiSelect
                   label="必要なスキル"
                   styles={{ label: { fontWeight: 700 } }}
-                  placeholder="スキルを選択"
+                  placeholder={
+                    field.value.length === 0 ? 'スキルを選択' : undefined
+                  }
                   data={AVAILABLE_SKILLS.map((skill) => skill.name)}
                   error={errors.skills?.message}
                   required
                   value={field.value}
                   onChange={field.onChange}
+                  hidePickedOptions
                 />
               )}
             />

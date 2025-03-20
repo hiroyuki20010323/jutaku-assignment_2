@@ -57,7 +57,7 @@ export default function AdminProjects() {
         <Table.Tbody>
           {TESTPROJECTS.map((project) => (
             <Table.Tr key={project.id}>
-              <Table.Td>
+              <Table.Td ta="center">
                 {project.createdAt.toLocaleDateString('ja-JP', {
                   year: 'numeric',
                   month: '2-digit',
@@ -65,11 +65,11 @@ export default function AdminProjects() {
                   timeZone: 'Asia/Tokyo'
                 })}
               </Table.Td>
-              <Table.Td>{project.title}</Table.Td>
-              <Table.Td>
+              <Table.Td ta="center">{project.title}</Table.Td>
+              <Table.Td ta="center">
                 <Text lineClamp={1}>{project.summary}</Text>
               </Table.Td>
-              <Table.Td>
+              <Table.Td ta="center">
                 {project.skills.map((skill, index) => (
                   <Text key={skill.id} component="span" mr="xs" mb="xs">
                     {skill.name}
