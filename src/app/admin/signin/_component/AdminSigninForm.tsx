@@ -32,7 +32,10 @@ export const AdminSigninForm = () => {
 
   const onSubmit = async (data: SignInFormData) => {
     console.log('管理者ログイン処理発火')
-    await signin(data)
+    await signin({
+      ...data,
+      isAdmin: true // 管理者ログインであることを示すフラグを追加
+    })
   }
 
   return (
