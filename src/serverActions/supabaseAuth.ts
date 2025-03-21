@@ -15,17 +15,15 @@ type EmailAndPassword = {
   password: string
 }
 
-
 type SignInParams = EmailAndPassword & {
-  isAdmin?: boolean; 
-};
-
-type SignUpData ={
-  email: string
-  password: string
-  name:string
+  isAdmin?: boolean
 }
 
+type SignUpData = {
+  email: string
+  password: string
+  name: string
+}
 
 export const signup = async ({
   email,
@@ -35,7 +33,7 @@ export const signup = async ({
   error?: string
 }> => {
   try {
-    console.log('signup:', { email,name })
+    console.log('signup:', { email, name })
 
     const authResponse = await createClient().auth.signUp({
       email,
@@ -57,7 +55,6 @@ export const signup = async ({
     const userId = user?.id
     if (!userId) return { error: 'userId is undefined' }
     console.log('signup:', userId)
-    
   } catch (error) {
     console.log('error', error)
     return { error: JSON.stringify(error) }
@@ -65,14 +62,11 @@ export const signup = async ({
   redirect(AFTER_SIGNUP_FOR_DB_REGISTER_PATH)
 }
 
-
-
-
 export const signin = async ({
   email,
   password,
   // デフォルトfalseだからadmin側だけformでtrue送る
-  isAdmin = false 
+  isAdmin = false
 }: SignInParams): Promise<{
   error?: string
 }> => {
@@ -92,12 +86,11 @@ export const signin = async ({
   } catch (error) {
     return { error: JSON.stringify(error) }
   }
-  
-  
+
   if (isAdmin) {
-    redirect(AFTER_ADMIN_SIGNIN_PATH) 
+    redirect(AFTER_ADMIN_SIGNIN_PATH)
   } else {
-    redirect(AFTER_SIGNIN_PATH) 
+    redirect(AFTER_SIGNIN_PATH)
   }
 }
 
