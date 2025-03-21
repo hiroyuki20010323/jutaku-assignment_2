@@ -11,8 +11,7 @@ import {
   TextInput,
   PasswordInput,
   Title,
-  Stack,
-  
+  Stack
 } from '@mantine/core'
 import type { SignInFormData } from '~/types/auth'
 import { signInSchema } from '~/schema/auth'
