@@ -14,9 +14,11 @@ import Link from 'next/link'
 import type { RouteLiteral } from 'nextjs-routes'
 import DeleteProjectModal from './_component/DeleteProjectModal'
 import { TESTPROJECTS } from '@/app/projects/_component/ProjectList'
+import { clientApi } from '~/lib/trpc/client-api'
 
 export default function AdminProjects() {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
+  const { data: projects } = clientApi.project.list.useQuery()
 
   const handleConfirmDelete = () => {
     // 削除処理のロジックを書くところ
@@ -55,10 +57,10 @@ export default function AdminProjects() {
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
-          {TESTPROJECTS.map((project) => (
+          {projects?.map((project) => (
             <Table.Tr key={project.id}>
               <Table.Td ta="center">
-                {project.createdAt.toLocaleDateString('ja-JP', {
+                {new Date(project.createdAt).toLocaleDateString('ja-JP', {
                   year: 'numeric',
                   month: '2-digit',
                   day: '2-digit',

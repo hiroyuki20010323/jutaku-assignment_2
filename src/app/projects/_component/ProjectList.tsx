@@ -1,8 +1,9 @@
 'use client'
 import React from 'react'
-import { Box, Button, Title, Table, Badge, Text } from '@mantine/core'
+import { Box, Button, Title, Table, Text } from '@mantine/core'
 import Link from 'next/link'
 import type { RouteLiteral } from 'nextjs-routes'
+import { clientApi } from '~/lib/trpc/client-api'
 import type { TestProject } from '~/types/project'
 
 // テストデータ
@@ -48,6 +49,9 @@ export const TESTPROJECTS: TestProject[] = [
 ]
 
 export const ProjectList = () => {
+  const { data: projects } = clientApi.project.list.useQuery()
+  console.log(projects)
+
   return (
     <>
       <Title order={2} ta="center" mb="lg" mt={80}>
@@ -80,10 +84,10 @@ export const ProjectList = () => {
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
-          {TESTPROJECTS.map((project) => (
+          {projects?.map((project) => (
             <Table.Tr key={project.id}>
               <Table.Td ta="center">
-                {project.createdAt.toLocaleDateString('ja-JP', {
+                {new Date(project.createdAt).toLocaleDateString('ja-JP', {
                   year: 'numeric',
                   month: '2-digit',
                   day: '2-digit',

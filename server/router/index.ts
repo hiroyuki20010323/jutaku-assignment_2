@@ -2,6 +2,7 @@ import { router } from '~/lib/trpc/trpc'
 import { adminProcedure, publicProcedure, userProcedure } from '../middleware'
 import { userRouter } from './user'
 import { todoRouter } from './sampleTodo'
+import { projectRouter } from './project'
 /**
  * このファイルは、ルーターを定義するためのファイルです。
  * ルーターは、クライアントからのリクエストを受け取り、
@@ -13,6 +14,7 @@ export const appRouter = router({
   user: userRouter,
   hello: publicProcedure.query(() => ({ msg: 'Hello World' })),
   todo: todoRouter, // 追加
+  project: projectRouter,
   userInfo: userProcedure.query(({ ctx: { supabaseUser } }) => {
     return supabaseUser
   }),
