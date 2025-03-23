@@ -66,6 +66,7 @@ export const signin = async ({
   email,
   password,
   // デフォルトfalseだからadmin側だけformでtrue送る
+  // TODO middlewereのindex.tsでadminかどうかの確認処理を実行しているのに、apiの追加回しではなく、routerでプロシージャ分ける
   isAdmin = false
 }: SignInParams): Promise<{
   error?: string
@@ -130,10 +131,6 @@ export const changeEmail = async (
   return {}
 }
 
-type ChangePasswordParams = {
-  userId: string
-}
-
 export const changePassword = async (
   password: string
 ): Promise<{
@@ -153,10 +150,6 @@ export const changePassword = async (
     return { error: JSON.stringify(error) }
   }
   return {}
-}
-
-type ResetPasswordParams = {
-  email: string
 }
 
 export const resetPassword = async (

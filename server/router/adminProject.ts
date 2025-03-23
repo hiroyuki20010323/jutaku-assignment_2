@@ -1,8 +1,9 @@
 import { z } from 'zod'
 import { router } from '~/lib/trpc/trpc'
-import { userProcedure, adminProcedure, publicProcedure } from '../middleware'
-import { TRPCError } from '@trpc/server'
+import { adminProcedure } from '../middleware'
 import { projectRepository } from '../repository/project'
+import { TRPCError } from '@trpc/server'
+import { prisma } from '~/prisma/prismaClient'
 
 // エントリー用の入力スキーマを定義
 const entryInputSchema = z.object({
@@ -13,9 +14,9 @@ const entryInputSchema = z.object({
 // Zodスキーマから型を抽出
 export type EntryInput = z.infer<typeof entryInputSchema>
 
-export const projectRouter = router({
-  // ユーザー用案件一覧
-  list: publicProcedure.query(async () => {
+export const adminProjectRouter = router({
+  // 管理者用案件一覧取得
+  list: adminProcedure.query(async () => {
     const projects = await projectRepository.findMany()
 
     return projects.map((project) => ({
@@ -29,11 +30,10 @@ export const projectRouter = router({
       }))
     }))
   }),
-
-  // 単一プロジェクト取得（ID指定）
-  findById: publicProcedure.input(z.string()).query(async ({ input }) => {
+  // 案件詳細
+  findById: adminProcedure.input(z.string()).query(async ({ input }) => {
     const project = await projectRepository.findById(input)
-    console.log(project)
+
     if (!project) {
       throw new TRPCError({
         code: 'NOT_FOUND',
@@ -41,47 +41,20 @@ export const projectRouter = router({
       })
     }
 
+    // プロジェクトにエントリーしたユーザー情報を取得
+    const entryUsers = await projectRepository.findEntryUsers(input)
+
     return {
       id: project.id,
       title: project.title,
       summary: project.summary,
       deadline: project.deadline,
       unitPrice: project.unitPrice,
-      createdAt: project.createdAt,
       skills: project.skillRequirements.map((req) => ({
         id: req.skill.id,
         name: req.skill.skillName
-      }))
+      })),
+      entryUsers // エントリーユーザー情報を追加
     }
-  }),
-
-  // ユーザーがエントリーしたプロジェクト一覧
-  entryList: userProcedure.query(async ({ ctx }) => {
-    const { userId } = ctx
-
-    if (!userId) {
-      throw new TRPCError({
-        code: 'UNAUTHORIZED',
-        message: 'ログインが必要です'
-      })
-    }
-
-    return await projectRepository.findUserEntries(userId)
-  }),
-
-  // プロジェクトへのエントリー
-  entry: userProcedure
-    .input(entryInputSchema)
-    .mutation(async ({ input, ctx }) => {
-      const { projectId, userId } = input
-
-      await projectRepository.entry({ projectId, userId })
-
-      console.log('エントリーリクエスト:', { projectId, userId })
-
-      return {
-        success: true,
-        message: 'エントリーが完了しました'
-      }
-    })
+  })
 })

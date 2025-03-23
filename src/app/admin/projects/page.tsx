@@ -18,7 +18,7 @@ import { clientApi } from '~/lib/trpc/client-api'
 
 export default function AdminProjects() {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
-  const { data: projects } = clientApi.project.list.useQuery()
+  const { data: projects } = clientApi.adminProject.list.useQuery()
 
   const handleConfirmDelete = () => {
     // 削除処理のロジックを書くところ

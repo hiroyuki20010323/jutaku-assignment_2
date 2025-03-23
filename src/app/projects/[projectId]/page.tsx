@@ -9,13 +9,14 @@ import {
   Container,
   Flex,
   Modal,
-  Center
+  Center,
+  Loader
 } from '@mantine/core'
 
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { useState } from 'react'
-import { TESTPROJECTS } from '../_component/ProjectList'
+import { clientApi } from '~/lib/trpc/client-api'
 
 type ProjectDataProps = {
   params: {
@@ -25,10 +26,70 @@ type ProjectDataProps = {
 
 export default function ProjectDetail({ params }: ProjectDataProps) {
   const [modalOpened, setModalOpened] = useState(false)
-  const project = TESTPROJECTS.find((p) => p.id === params.projectId)
+  const [entryStatus, setEntryStatus] = useState<{
+    loading: boolean
+    success?: boolean
+    error?: string
+  }>({ loading: false })
 
-  if (!project) {
-    notFound()
+  console.log('パラメータ:', params)
+
+  const { data: userInfo } = clientApi.userInfo.useQuery()
+
+  const {
+    data: project,
+    isLoading,
+    error
+  } = clientApi.project.findById.useQuery(params.projectId)
+
+  // エントリーミューテーション
+  const entryMutation = clientApi.project.entry.useMutation({
+    onSuccess: (data) => {
+      console.log('エントリー成功:', data)
+      setEntryStatus({ loading: false, success: true })
+      setModalOpened(true)
+    },
+    onError: (error) => {
+      console.error('エントリーエラー:', error)
+      setEntryStatus({ loading: false, error: error.message })
+      alert(`エントリーに失敗しました: ${error.message}`)
+    }
+  })
+
+  // エントリー処理を実行する関数
+  const handleEntry = async () => {
+    if (!userInfo) {
+      alert('ログインが必要です')
+      return
+    }
+
+    setEntryStatus({ loading: true })
+
+    try {
+      await entryMutation.mutate({
+        projectId: params.projectId,
+        userId: userInfo.id
+      })
+    } catch (error) {
+      console.error('エントリー実行エラー:', error)
+    }
+  }
+
+  console.log('プロジェクトデータ:', project)
+
+  if (isLoading) {
+    return (
+      <Container size="lg" py="xl">
+        <Center style={{ height: '50vh' }}>
+          <Loader size="xl" />
+        </Center>
+      </Container>
+    )
+  }
+
+  if (error || !project) {
+    console.error('プロジェクト読み込みエラー:', error)
+    return notFound()
   }
 
   return (
@@ -75,7 +136,7 @@ export default function ProjectDetail({ params }: ProjectDataProps) {
           </Text>
           <Box ml={40} mb="xl">
             <Text suppressHydrationWarning>
-              {project.createdAt.toLocaleDateString('ja-JP', {
+              {new Date(project.createdAt).toLocaleDateString('ja-JP', {
                 year: 'numeric',
                 month: '2-digit',
                 day: '2-digit',
@@ -103,7 +164,7 @@ export default function ProjectDetail({ params }: ProjectDataProps) {
           </Text>
           <Box ml={40} mb="xl">
             <Group>
-              {project.skills.map((skill, index) => (
+              {project.skills?.map((skill, index) => (
                 <Text key={skill.id} component="span" mr="xs" mb="xs">
                   {skill.name}
                   {index < project.skills.length - 1 ? ', ' : ''}
@@ -117,7 +178,7 @@ export default function ProjectDetail({ params }: ProjectDataProps) {
           </Text>
           <Box ml={40} mb="xl">
             <Text suppressHydrationWarning>
-              {project.deadline.toLocaleDateString('ja-JP', {
+              {new Date(project.deadline).toLocaleDateString('ja-JP', {
                 year: 'numeric',
                 month: '2-digit',
                 day: '2-digit',
@@ -139,7 +200,8 @@ export default function ProjectDetail({ params }: ProjectDataProps) {
           color="blue"
           mt={80}
           size="md"
-          onClick={() => setModalOpened(true)}
+          loading={entryStatus.loading}
+          onClick={handleEntry}
         >
           この案件にエントリーする
         </Button>
