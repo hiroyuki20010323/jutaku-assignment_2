@@ -55,7 +55,7 @@ export const PROJECTS = [
   }
 ]
 
-// スキルデータ（3件）
+// スキルデータ
 export const SKILLS = [
   {
     skillName: 'React'
@@ -65,5 +65,26 @@ export const SKILLS = [
   },
   {
     skillName: 'AWS'
+  },
+  {
+    skillName: 'TypeScript'
+  },
+  {
+    skillName: 'Node.js'
+  },
+  {
+    skillName: 'Docker'
+  },
+  {
+    skillName: 'Firebase'
+  },
+  {
+    skillName: 'GraphQL'
+  },
+  {
+    skillName: 'React Native'
+  },
+  {
+    skillName: 'Python'
   }
 ]

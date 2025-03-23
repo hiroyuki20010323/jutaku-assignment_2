@@ -82,20 +82,46 @@ async function main() {
     // スキル要件の登録
     console.log('スキル要件を登録中...')
     const skillRequirements = [
-      // ECサイトプロジェクトにReactを要求
+      // ECサイトプロジェクト
       {
         projectId: createdProjects[0].id,
-        skillId: createdSkills[0].id
+        skillId: createdSkills[0].id // React
       },
-      // 管理システムプロジェクトにNext.jsを要求
+      {
+        projectId: createdProjects[0].id,
+        skillId: createdSkills[1].id // Next.js
+      },
+      {
+        projectId: createdProjects[0].id,
+        skillId: createdSkills[3].id // TypeScript
+      },
+
+      // 管理システムプロジェクト
       {
         projectId: createdProjects[1].id,
-        skillId: createdSkills[1].id
+        skillId: createdSkills[1].id // Next.js
       },
-      // モバイルアプリプロジェクトにAWSを要求
+      {
+        projectId: createdProjects[1].id,
+        skillId: createdSkills[4].id // Node.js
+      },
+      {
+        projectId: createdProjects[1].id,
+        skillId: createdSkills[5].id // Docker
+      },
+
+      // モバイルアプリプロジェクト
       {
         projectId: createdProjects[2].id,
-        skillId: createdSkills[2].id
+        skillId: createdSkills[2].id // AWS
+      },
+      {
+        projectId: createdProjects[2].id,
+        skillId: createdSkills[6].id // Firebase
+      },
+      {
+        projectId: createdProjects[2].id,
+        skillId: createdSkills[8].id // React Native
       }
     ]
 
