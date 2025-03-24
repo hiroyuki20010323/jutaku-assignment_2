@@ -29,7 +29,7 @@ export default function AdminProjectDetail({
     isLoading,
     error
   } = clientApi.adminProject.findById.useQuery(params.projectId)
-  console.log(project)
+
   if (isLoading) {
     return (
       <Container size="lg" py="xl">

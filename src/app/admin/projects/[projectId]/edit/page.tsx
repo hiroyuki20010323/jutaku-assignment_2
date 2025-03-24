@@ -13,16 +13,17 @@ import {
   Title,
   Container,
   Flex,
-  Text
+  Text,
+  Center,
+  Loader
 } from '@mantine/core'
 import Link from 'next/link'
 import { Controller } from 'react-hook-form'
 import { DateInput } from '@mantine/dates'
-import { useEffect, useState } from 'react'
-import { useEditProjectStore } from '@/store'
+import { useEffect } from 'react'
 import type { EditProjectInput } from '~/types/project'
 import { editProjectSchema } from '~/schema/project'
-import { TESTPROJECTS } from '@/app/projects/_component/ProjectList'
+import { clientApi } from '~/lib/trpc/client-api'
 
 // スキルリストをProject型に合わせた形式に変更
 export const AVAILABLE_SKILLS = [
@@ -36,15 +37,21 @@ export const AVAILABLE_SKILLS = [
 export default function EditProject({
   params
 }: { params: { projectId: string } }) {
-  const { projectData, setProject } = useEditProjectStore()
-  const [isLoading, setIsLoading] = useState(true)
+  const {
+    data: project,
+    isLoading,
+    refetch
+  } = clientApi.adminProject.findById.useQuery(params.projectId)
 
+  const editMutation = clientApi.adminProject.edit.useMutation()
+
+  // react-hook-formの設定
   const {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
-    control
+    control,
+    reset
   } = useForm<EditProjectInput>({
     resolver: zodResolver(editProjectSchema),
     defaultValues: {
@@ -56,201 +63,172 @@ export default function EditProject({
     }
   })
 
+  // プロジェクトデータを取得したらフォームの値をリセット
   useEffect(() => {
-    //TODO ローカルストレージからのデータ取得が非同期で、テストデータが優先されてしまうから、取得待って表示させる
-    // API実装の過程でこの辺りは不要になると思われる。。。　onSubmitなども同様
-    const loadData = async () => {
-      setIsLoading(true)
-
-      await new Promise((resolve) => setTimeout(resolve, 100))
-      const storeState = useEditProjectStore.getState()
-
-      if (storeState.projectData) {
-        reset({
-          title: storeState.projectData.title,
-          summary: storeState.projectData.summary,
-          skills: storeState.projectData.skills.map((skill) => skill.name),
-          deadline: new Date(storeState.projectData.deadline),
-          unitPrice: storeState.projectData.unitPrice
-        })
-      } else {
-        // APIからデータを取得
-        const project = TESTPROJECTS.find((p) => p.id === params.projectId)
-
-        if (project) {
-          setProject(project)
-
-          reset({
-            ...project,
-            skills: project.skills.map((skill) => skill.name)
-          })
-        } else {
-          console.error('プロジェクトが見つかりません')
-        }
-      }
-
-      setIsLoading(false)
+    if (project) {
+      reset({
+        title: project.title,
+        summary: project.summary,
+        skills: project.skills.map((skill: { name: string }) => skill.name),
+        deadline: new Date(project.deadline),
+        unitPrice: project.unitPrice
+      })
     }
-
-    loadData()
-  }, [params.projectId, reset, setProject])
+  }, [project, reset])
 
   const onSubmit = async (data: EditProjectInput) => {
     try {
-      const formattedSkills = data.skills.map((skillName) => {
-        const existingSkill = projectData?.skills.find(
-          (s) => s.name === skillName
-        )
-
-        const availableSkill = AVAILABLE_SKILLS.find(
-          (s) => s.name === skillName
-        )
-
-        return (
-          existingSkill ||
-          availableSkill || {
-            id: `skill-${crypto.randomUUID().slice(0, 8)}`,
-            name: skillName
-          }
-        )
-      })
-
-      // 更新されたプロジェクトデータを作成
-      const updatedProject = {
+      // データ送信前に日付を確実にDate型に変換
+      const formattedData = {
         ...data,
-        id: params.projectId,
-        skills: formattedSkills,
-        updatedAt: new Date(),
-        entryUsers: projectData?.entryUsers || []
+        // deadlineがstring型の場合はDateに変換、すでにDate型なら変更なし
+        deadline:
+          data.deadline instanceof Date
+            ? data.deadline
+            : new Date(data.deadline)
       }
 
-      setProject(updatedProject)
+      // 直接ISOStringで送信することでJSON変換での型情報喪失を防ぐ
+      const apiData = {
+        ...formattedData,
+        deadline: formattedData.deadline.toISOString()
+      }
+
+      const result = await editMutation.mutateAsync({
+        projectId: params.projectId,
+        projectData: apiData
+      })
+
+      if (result) {
+        await refetch()
+        alert('プロジェクトを更新しました')
+      }
     } catch (error) {
       console.error('プロジェクト更新エラー:', error)
     }
   }
 
+  if (isLoading) {
+    return (
+      <Container size="lg" py="xl">
+        <Center style={{ height: '50vh' }}>
+          <Loader size="xl" />
+        </Center>
+      </Container>
+    )
+  }
   return (
     <Container size="md">
-      {isLoading ? (
-        <div>データを読み込み中...</div>
-      ) : (
-        <>
-          <Stack mb="xl" mt={40}>
-            <Title order={2} ta="center">
-              案件編集
-            </Title>
-            <Box>
-              <Flex justify="flex-end">
-                <Button
-                  component={Link}
-                  href="/admin/projects"
-                  variant="contained"
-                  color="blue"
-                  w={100}
-                >
-                  戻る
-                </Button>
-              </Flex>
-            </Box>
+      <Stack mb="xl" mt={40}>
+        <Title order={2} ta="center">
+          案件編集
+        </Title>
+        <Box>
+          <Flex justify="flex-end">
+            <Button
+              component={Link}
+              href="/admin/projects"
+              variant="contained"
+              color="blue"
+              w={100}
+            >
+              戻る
+            </Button>
+          </Flex>
+        </Box>
+      </Stack>
+
+      <Box p="xl" style={{ border: '1px solid black', borderRadius: '8px' }}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Stack gap="xl">
+            <TextInput
+              label="案件名"
+              styles={{ label: { fontWeight: 700 } }}
+              placeholder="案件の件名を入力"
+              error={errors.title?.message}
+              required
+              {...register('title')}
+            />
+
+            <Textarea
+              label="概要"
+              styles={{ label: { fontWeight: 700 } }}
+              placeholder="案件の概要を入力"
+              error={errors.summary?.message}
+              required
+              minRows={4}
+              {...register('summary')}
+            />
+
+            <Controller
+              name="skills"
+              control={control}
+              render={({ field }) => (
+                <MultiSelect
+                  label="必要なスキル"
+                  styles={{ label: { fontWeight: 700 } }}
+                  placeholder={
+                    field.value.length === 0 ? 'スキルを選択' : undefined
+                  }
+                  data={AVAILABLE_SKILLS.map((skill) => skill.name)}
+                  error={errors.skills?.message}
+                  required
+                  value={field.value}
+                  onChange={field.onChange}
+                  hidePickedOptions
+                />
+              )}
+            />
+
+            <Controller
+              name="deadline"
+              control={control}
+              render={({ field }) => (
+                <Box>
+                  <Text fw={700} mb={8}>
+                    応募締切日 <span style={{ color: 'red' }}>*</span>
+                  </Text>
+                  <DateInput
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder="締切日を選択"
+                    valueFormat="YYYY/MM/DD"
+                  />
+                  {errors.deadline?.message && (
+                    <Text color="red" size="sm" mt={8}>
+                      {errors.deadline.message}
+                    </Text>
+                  )}
+                </Box>
+              )}
+            />
+
+            <Controller
+              name="unitPrice"
+              control={control}
+              render={({ field }) => (
+                <NumberInput
+                  label="単価"
+                  styles={{ label: { fontWeight: 700 } }}
+                  placeholder="単価を入力"
+                  error={errors.unitPrice?.message}
+                  required
+                  min={0}
+                  hideControls
+                  value={field.value}
+                  onChange={field.onChange}
+                />
+              )}
+            />
+
+            <Flex gap="md" justify="center" mt="xl">
+              <Button type="submit" color="blue" fullWidth>
+                保存
+              </Button>
+            </Flex>
           </Stack>
-
-          <Box
-            p="xl"
-            style={{ border: '1px solid black', borderRadius: '8px' }}
-          >
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <Stack gap="xl">
-                <TextInput
-                  label="案件名"
-                  styles={{ label: { fontWeight: 700 } }}
-                  placeholder="案件の件名を入力"
-                  error={errors.title?.message}
-                  required
-                  {...register('title')}
-                />
-
-                <Textarea
-                  label="概要"
-                  styles={{ label: { fontWeight: 700 } }}
-                  placeholder="案件の概要を入力"
-                  error={errors.summary?.message}
-                  required
-                  minRows={4}
-                  {...register('summary')}
-                />
-
-                <Controller
-                  name="skills"
-                  control={control}
-                  render={({ field }) => (
-                    <MultiSelect
-                      label="必要なスキル"
-                      styles={{ label: { fontWeight: 700 } }}
-                      placeholder={
-                        field.value.length === 0 ? 'スキルを選択' : undefined
-                      }
-                      data={AVAILABLE_SKILLS.map((skill) => skill.name)}
-                      error={errors.skills?.message}
-                      required
-                      value={field.value}
-                      onChange={field.onChange}
-                      hidePickedOptions
-                    />
-                  )}
-                />
-
-                <Controller
-                  name="deadline"
-                  control={control}
-                  render={({ field }) => (
-                    <Box>
-                      <Text fw={700} mb={8}>
-                        応募締切日 <span style={{ color: 'red' }}>*</span>
-                      </Text>
-                      <DateInput
-                        value={field.value}
-                        onChange={field.onChange}
-                        placeholder="締切日を選択"
-                        valueFormat="YYYY/MM/DD"
-                      />
-                      {errors.deadline?.message && (
-                        <Text color="red" size="sm" mt={8}>
-                          {errors.deadline.message}
-                        </Text>
-                      )}
-                    </Box>
-                  )}
-                />
-
-                <Controller
-                  name="unitPrice"
-                  control={control}
-                  render={({ field }) => (
-                    <NumberInput
-                      label="単価"
-                      styles={{ label: { fontWeight: 700 } }}
-                      placeholder="単価を入力"
-                      error={errors.unitPrice?.message}
-                      required
-                      min={0}
-                      hideControls
-                      value={field.value}
-                      onChange={field.onChange}
-                    />
-                  )}
-                />
-
-                <Flex gap="md" justify="center" mt="xl">
-                  <Button type="submit" color="blue" fullWidth>
-                    保存
-                  </Button>
-                </Flex>
-              </Stack>
-            </form>
-          </Box>
-        </>
-      )}
+        </form>
+      </Box>
     </Container>
   )
 }

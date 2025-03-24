@@ -4,9 +4,24 @@ export const editProjectSchema = z.object({
   title: z.string().min(1, '件名を入力してください'),
   summary: z.string().min(1, '概要を入力してください'),
   skills: z.array(z.string()).min(1, '必要なスキルを1つ以上選択してください'),
-  deadline: z.date({
-    required_error: '応募締切日を入力してください'
-  }),
+  deadline: z.preprocess(
+    // 文字列または日付を受け取り、確実にDate型に変換
+    (arg) => {
+      if (typeof arg === 'string') {
+        // ISO文字列または他の日付文字列からUTC日付オブジェクトを作成
+        return new Date(arg)
+      }
+      if (arg instanceof Date) {
+        // すでにDateオブジェクトの場合はそのまま返す
+        return arg
+      }
+      // その他の場合は変換を試みる
+      return new Date(String(arg))
+    },
+    z.date({
+      required_error: '応募締切日を入力してください'
+    })
+  ),
   unitPrice: z
     .number({
       required_error: '単価を入力してください'
@@ -18,9 +33,20 @@ export const createProjectSchema = z.object({
   title: z.string().min(1, '案件名は必須です'),
   summary: z.string().min(1, '概要は必須です'),
   skills: z.array(z.string()).min(1, '少なくとも1つのスキルを選択してください'),
-  deadline: z.date({
-    required_error: '締切日は必須です',
-    invalid_type_error: '有効な日付を入力してください'
-  }),
+  deadline: z.preprocess(
+    (arg) => {
+      if (typeof arg === 'string') {
+        return new Date(arg)
+      }
+      if (arg instanceof Date) {
+        return arg
+      }
+      return new Date(String(arg))
+    },
+    z.date({
+      required_error: '締切日は必須です',
+      invalid_type_error: '有効な日付を入力してください'
+    })
+  ),
   unitPrice: z.number().min(1, '単価は必須です')
 })
