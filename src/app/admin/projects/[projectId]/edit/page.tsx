@@ -24,6 +24,8 @@ import { useEffect } from 'react'
 import type { EditProjectInput } from '~/types/project'
 import { editProjectSchema } from '~/schema/project'
 import { clientApi } from '~/lib/trpc/client-api'
+import { Router } from 'next/router'
+import { useRouter } from 'next/navigation'
 
 // スキルリストをProject型に合わせた形式に変更
 export const AVAILABLE_SKILLS = [
@@ -44,6 +46,8 @@ export default function EditProject({
   } = clientApi.adminProject.findById.useQuery(params.projectId)
 
   const editMutation = clientApi.adminProject.edit.useMutation()
+
+  const router = useRouter()
 
   // react-hook-formの設定
   const {
@@ -102,6 +106,7 @@ export default function EditProject({
       if (result) {
         await refetch()
         alert('プロジェクトを更新しました')
+        router.push('/admin/projects')
       }
     } catch (error) {
       console.error('プロジェクト更新エラー:', error)

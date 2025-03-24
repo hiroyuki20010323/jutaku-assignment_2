@@ -1,24 +1,22 @@
 import { z } from 'zod'
 import { router } from '~/lib/trpc/trpc'
-import { adminProcedure, userProcedure } from '../middleware'
+import { adminProcedure } from '../middleware'
 import { projectRepository } from '../repository/project'
 import { TRPCError } from '@trpc/server'
 import { prisma } from '~/prisma/prismaClient'
 import { editProjectSchema, createProjectSchema } from '~/schema/project'
+import { adminProjectRepository } from '../repository/adminProject'
 
-// エントリー用の入力スキーマを定義
 const entryInputSchema = z.object({
   projectId: z.string(),
   userId: z.string()
 })
 
-// プロジェクト編集用の入力スキーマ
 const editProjectInputSchema = z.object({
   projectId: z.string(),
   projectData: editProjectSchema
 })
 
-// Zodスキーマから型を抽出
 export type EntryInput = z.infer<typeof entryInputSchema>
 export type EditProjectWithIdInput = z.infer<typeof editProjectInputSchema>
 
@@ -34,7 +32,6 @@ export const adminProjectRouter = router({
       })
     }
 
-    // プロジェクトにエントリーしたユーザー情報を取得
     const entryUsers = await projectRepository.findEntryUsers(input)
 
     return {
@@ -51,13 +48,13 @@ export const adminProjectRouter = router({
     }
   }),
 
+  // 案件編集
   edit: adminProcedure
     .input(editProjectInputSchema)
     .mutation(async ({ input }) => {
       const { projectId, projectData } = input
 
       try {
-        // プロジェクトの存在確認
         const existingProject = await projectRepository.findById(projectId)
         if (!existingProject) {
           throw new TRPCError({
@@ -69,72 +66,34 @@ export const adminProjectRouter = router({
         // スキル情報の処理
         const skillIds = await Promise.all(
           projectData.skills.map(async (skillName) => {
-            // 既存のスキルを検索
-            let skill = await prisma.skill.findFirst({
-              where: { skillName }
-            })
+            const skill =
+              await adminProjectRepository.findSkillByName(skillName)
 
-            // 存在しない場合は新規作成
             if (!skill) {
-              skill = await prisma.skill.create({
-                data: { skillName }
+              throw new TRPCError({
+                code: 'NOT_FOUND',
+                message: 'スキル情報がありません'
               })
             }
-
             return skill.id
           })
         )
 
-        // トランザクション内でプロジェクトの更新とスキル要件の更新を行う
-        const updatedProject = await prisma.$transaction(async (tx) => {
-          // プロジェクト自体の更新
-          const project = await tx.project.update({
-            where: { id: projectId },
-            data: {
-              title: projectData.title,
-              summary: projectData.summary,
-              deadline: projectData.deadline,
-              unitPrice: projectData.unitPrice,
-              updatedAt: new Date()
-            },
-            include: {
-              skillRequirements: {
-                include: {
-                  skill: true
-                }
-              }
-            }
-          })
-
-          // 既存のスキル要件を削除
-          await tx.skillRequirement.deleteMany({
-            where: { projectId }
-          })
-
-          // 新しいスキル要件を作成
-          await Promise.all(
-            skillIds.map((skillId) =>
-              tx.skillRequirement.create({
-                data: {
-                  projectId,
-                  skillId
-                }
-              })
-            )
-          )
-
-          return project
-        })
+        const { project, skills } = await adminProjectRepository.updateProject(
+          projectId,
+          projectData,
+          skillIds
+        )
 
         return {
-          id: updatedProject.id,
-          title: updatedProject.title,
-          summary: updatedProject.summary,
-          deadline: updatedProject.deadline,
-          unitPrice: updatedProject.unitPrice,
-          skills: updatedProject.skillRequirements.map((req) => ({
-            id: req.skill.id,
-            name: req.skill.skillName
+          id: project.id,
+          title: project.title,
+          summary: project.summary,
+          deadline: project.deadline,
+          unitPrice: project.unitPrice,
+          skills: skills.map((skill) => ({
+            id: skill.id,
+            name: skill.skillName
           }))
         }
       } catch (error) {
@@ -150,65 +109,30 @@ export const adminProjectRouter = router({
       }
     }),
 
+  // プロジェクト作成
   create: adminProcedure
     .input(createProjectSchema)
     .mutation(async ({ input }) => {
       try {
-        // スキル情報の処理
         const skillIds = await Promise.all(
           input.skills.map(async (skillName) => {
-            // 既存のスキルを検索
-            let skill = await prisma.skill.findFirst({
-              where: { skillName }
-            })
-
-            // 存在しない場合は新規作成
+            const skill =
+              await adminProjectRepository.findSkillByName(skillName)
             if (!skill) {
-              skill = await prisma.skill.create({
-                data: { skillName }
+              throw new TRPCError({
+                code: 'NOT_FOUND',
+                message: 'スキル情報がありません'
               })
             }
-
             return skill.id
           })
         )
 
-        // トランザクション内でプロジェクトの作成とスキル要件の作成を行う
-        const createdProject = await prisma.$transaction(async (tx) => {
-          // プロジェクト自体の作成
-          const project = await tx.project.create({
-            data: {
-              title: input.title,
-              summary: input.summary,
-              deadline: input.deadline,
-              unitPrice: input.unitPrice,
-              createdAt: new Date(),
-              updatedAt: new Date()
-            }
-          })
-
-          // スキル要件を作成
-          await Promise.all(
-            skillIds.map((skillId) =>
-              tx.skillRequirement.create({
-                data: {
-                  projectId: project.id,
-                  skillId
-                }
-              })
-            )
-          )
-
-          return project
-        })
+        await adminProjectRepository.createProject(input, skillIds)
 
         return {
-          id: createdProject.id,
-          title: createdProject.title,
-          summary: createdProject.summary,
-          deadline: createdProject.deadline,
-          unitPrice: createdProject.unitPrice,
-          skills: skillIds
+          success: true,
+          message: 'プロジェクトが作成されました'
         }
       } catch (error) {
         console.error('プロジェクト作成エラー:', error)
@@ -224,7 +148,6 @@ export const adminProjectRouter = router({
     .input(z.string())
     .mutation(async ({ input: projectId }) => {
       try {
-        // プロジェクトの存在確認
         const existingProject = await projectRepository.findById(projectId)
         if (!existingProject) {
           throw new TRPCError({
@@ -233,22 +156,16 @@ export const adminProjectRouter = router({
           })
         }
 
-        // トランザクション内でスキル要件とプロジェクトを削除
-        await prisma.$transaction(async (tx) => {
-          // 関連するスキル要件を削除
-          await tx.skillRequirement.deleteMany({
-            where: { projectId }
-          })
+        await prisma.skillRequirement.deleteMany({
+          where: { projectId }
+        })
 
-          // 関連するエントリー情報を削除
-          await tx.projectEntry.deleteMany({
-            where: { projectId }
-          })
+        await prisma.projectEntry.deleteMany({
+          where: { projectId }
+        })
 
-          // プロジェクト自体を削除
-          await tx.project.delete({
-            where: { id: projectId }
-          })
+        await prisma.project.delete({
+          where: { id: projectId }
         })
 
         return { success: true, message: 'プロジェクトを削除しました' }

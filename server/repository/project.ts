@@ -11,7 +11,6 @@ export type ProjectEntryListType = {
   }
 }
 
-// エントリーユーザー情報の型定義
 export type EntryUserType = {
   id: string
   username: string
@@ -46,6 +45,7 @@ export type ProjectDetailType = {
 }
 
 export const projectRepository = {
+  // 案件一覧
   async findMany(): Promise<ProjectListType[]> {
     return prisma.project.findMany({
       orderBy: { createdAt: 'desc' },
@@ -68,6 +68,7 @@ export const projectRepository = {
     })
   },
 
+  // 案件詳細
   async findById(id: string): Promise<ProjectDetailType | null> {
     return prisma.project.findUnique({
       where: { id },
@@ -92,6 +93,7 @@ export const projectRepository = {
     })
   },
 
+  // エントリー
   async entry({ projectId, userId }: ProjectEntryInput): Promise<void> {
     await prisma.projectEntry.create({
       data: {

@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { router } from '~/lib/trpc/trpc'
-import { userProcedure, adminProcedure, publicProcedure } from '../middleware'
+import { userProcedure } from '../middleware'
 import { TRPCError } from '@trpc/server'
 import { projectRepository } from '../repository/project'
 
@@ -19,7 +19,7 @@ export type EntryInput = z.infer<typeof entryInputSchema>
 
 export const projectRouter = router({
   // ユーザー用案件一覧
-  list: publicProcedure.query(async () => {
+  list: userProcedure.query(async () => {
     const projects = await projectRepository.findMany()
 
     return projects.map((project) => ({
@@ -35,9 +35,9 @@ export const projectRouter = router({
   }),
 
   // 単一プロジェクト取得（ID指定）
-  findById: publicProcedure.input(z.string()).query(async ({ input }) => {
+  findById: userProcedure.input(z.string()).query(async ({ input }) => {
     const project = await projectRepository.findById(input)
-    console.log(project)
+
     if (!project) {
       throw new TRPCError({
         code: 'NOT_FOUND',
@@ -62,14 +62,6 @@ export const projectRouter = router({
   // ユーザーがエントリーしたプロジェクト一覧
   entryList: userProcedure.query(async ({ ctx }) => {
     const { userId } = ctx
-
-    if (!userId) {
-      throw new TRPCError({
-        code: 'UNAUTHORIZED',
-        message: 'ログインが必要です'
-      })
-    }
-
     return await projectRepository.findUserEntries(userId)
   }),
 
@@ -79,13 +71,6 @@ export const projectRouter = router({
     .mutation(async ({ input, ctx }) => {
       const { projectId } = input
       const userId = ctx.userId
-
-      if (!userId) {
-        throw new TRPCError({
-          code: 'UNAUTHORIZED',
-          message: 'ログインが必要です'
-        })
-      }
 
       try {
         const entryData = { projectId, userId }
