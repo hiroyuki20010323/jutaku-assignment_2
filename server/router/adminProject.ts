@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { router } from '~/lib/trpc/trpc'
-import { adminProcedure } from '../middleware'
+import { adminProcedure, userProcedure } from '../middleware'
 import { projectRepository } from '../repository/project'
 import { TRPCError } from '@trpc/server'
 import { prisma } from '~/prisma/prismaClient'
@@ -23,21 +23,6 @@ export type EntryInput = z.infer<typeof entryInputSchema>
 export type EditProjectWithIdInput = z.infer<typeof editProjectInputSchema>
 
 export const adminProjectRouter = router({
-  // 管理者用案件一覧取得
-  list: adminProcedure.query(async () => {
-    const projects = await projectRepository.findMany()
-
-    return projects.map((project) => ({
-      id: project.id,
-      title: project.title,
-      summary: project.summary,
-      createdAt: project.createdAt,
-      skills: project.skillRequirements.map((req) => ({
-        id: req.skill.id,
-        name: req.skill.skillName
-      }))
-    }))
-  }),
   // 案件詳細
   findById: adminProcedure.input(z.string()).query(async ({ input }) => {
     const project = await projectRepository.findById(input)

@@ -68,12 +68,24 @@ export async function updateSession(req: NextRequest) {
     )
 
     // ログイン済みチェックが必要な場合は実装する
-    const { error } = await supabase.auth.getUser()
+    const { data: user, error } = await supabase.auth.getUser()
     if (isLoginedCheckUrl(req.nextUrl.pathname) && error) {
       console.log("redirect to '/signin'")
       const redirectUrl = req.nextUrl.clone()
       redirectUrl.pathname = LOGINED_CHECK_FAILED_REDIRECT_URL
       redirectUrl.searchParams.set('redirectedFrom', req.nextUrl.pathname)
+
+      return NextResponse.redirect(redirectUrl)
+    }
+
+    // 管理者ページへのアクセス制御
+    if (
+      req.nextUrl.pathname.startsWith('/admin') &&
+      req.nextUrl.pathname !== '/admin/signin' &&
+      (!user.user || user.user.user_metadata.role !== 'ADMIN')
+    ) {
+      const redirectUrl = req.nextUrl.clone()
+      redirectUrl.pathname = '/admin/signin'
 
       return NextResponse.redirect(redirectUrl)
     }
