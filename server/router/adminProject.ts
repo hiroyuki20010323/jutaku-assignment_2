@@ -62,7 +62,7 @@ export const adminProjectRouter = router({
         id: req.skill.id,
         name: req.skill.skillName
       })),
-      entryUsers // エントリーユーザー情報を追加
+      entryUsers
     }
   }),
 

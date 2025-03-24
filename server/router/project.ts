@@ -4,11 +4,15 @@ import { userProcedure, adminProcedure, publicProcedure } from '../middleware'
 import { TRPCError } from '@trpc/server'
 import { projectRepository } from '../repository/project'
 
-// エントリー用の入力スキーマを定義
+// エントリー用の入力スキーマを定義（プロジェクトIDのみ必要）
 const entryInputSchema = z.object({
-  projectId: z.string(),
-  userId: z.string()
+  projectId: z.string()
 })
+
+export type ProjectEntryInput = {
+  projectId: string
+  userId: string
+}
 
 // Zodスキーマから型を抽出
 export type EntryInput = z.infer<typeof entryInputSchema>
@@ -73,15 +77,30 @@ export const projectRouter = router({
   entry: userProcedure
     .input(entryInputSchema)
     .mutation(async ({ input, ctx }) => {
-      const { projectId, userId } = input
+      const { projectId } = input
+      const userId = ctx.userId
 
-      await projectRepository.entry({ projectId, userId })
+      if (!userId) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'ログインが必要です'
+        })
+      }
 
-      console.log('エントリーリクエスト:', { projectId, userId })
+      try {
+        const entryData = { projectId, userId }
+        await projectRepository.entry(entryData)
 
-      return {
-        success: true,
-        message: 'エントリーが完了しました'
+        return {
+          success: true,
+          message: 'エントリーが完了しました'
+        }
+      } catch (error) {
+        console.error('エントリー作成エラー:', error)
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'エントリーの作成に失敗しました'
+        })
       }
     })
 })

@@ -19,6 +19,7 @@ export default function EntryList() {
     isLoading,
     error
   } = clientApi.project.entryList.useQuery()
+  console.log(entries)
 
   // ローディング中の表示
   if (isLoading) {
@@ -96,7 +97,7 @@ export default function EntryList() {
           {entries.map((entry) => (
             <Table.Tr key={entry.id}>
               <Table.Td ta="center">
-                {new Date(entry.entryDate).toLocaleDateString('ja-JP', {
+                {new Date(entry.createdAt).toLocaleDateString('ja-JP', {
                   year: 'numeric',
                   month: '2-digit',
                   day: '2-digit',

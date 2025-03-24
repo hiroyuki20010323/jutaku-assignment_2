@@ -1,9 +1,9 @@
 import { prisma } from '~/prisma/prismaClient'
-import type { EntryInput } from '../router/project'
+import type { ProjectEntryInput } from '../router/project'
 
 export type ProjectEntryListType = {
   id: string
-  entryDate: Date
+  createdAt: Date
   project: {
     id: string
     title: string
@@ -92,9 +92,7 @@ export const projectRepository = {
     })
   },
 
-  async entry({ projectId, userId }: EntryInput): Promise<void> {
-    console.log('projectRepository.entry:', { projectId, userId })
-
+  async entry({ projectId, userId }: ProjectEntryInput): Promise<void> {
     await prisma.projectEntry.create({
       data: {
         project: {
@@ -109,7 +107,7 @@ export const projectRepository = {
 
   // ユーザーがエントリーしたプロジェクト一覧を取得
   async findUserEntries(userId: string): Promise<ProjectEntryListType[]> {
-    const entries = await prisma.projectEntry.findMany({
+    return await prisma.projectEntry.findMany({
       where: {
         userId
       },
@@ -128,17 +126,6 @@ export const projectRepository = {
         }
       }
     })
-
-    // 取得したデータを整形して返却
-    return entries.map((entry) => ({
-      id: entry.id,
-      entryDate: entry.createdAt,
-      project: {
-        id: entry.project.id,
-        title: entry.project.title,
-        unitPrice: entry.project.unitPrice
-      }
-    }))
   },
 
   // プロジェクトにエントリーしたユーザー一覧を取得

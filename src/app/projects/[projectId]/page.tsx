@@ -32,8 +32,6 @@ export default function ProjectDetail({ params }: ProjectDataProps) {
     error?: string
   }>({ loading: false })
 
-  console.log('パラメータ:', params)
-
   const { data: userInfo } = clientApi.userInfo.useQuery()
 
   const {
@@ -45,7 +43,6 @@ export default function ProjectDetail({ params }: ProjectDataProps) {
   // エントリーミューテーション
   const entryMutation = clientApi.project.entry.useMutation({
     onSuccess: (data) => {
-      console.log('エントリー成功:', data)
       setEntryStatus({ loading: false, success: true })
       setModalOpened(true)
     },
@@ -56,8 +53,7 @@ export default function ProjectDetail({ params }: ProjectDataProps) {
     }
   })
 
-  // エントリー処理を実行する関数
-  const handleEntry = async () => {
+  const handleEntry = () => {
     if (!userInfo) {
       alert('ログインが必要です')
       return
@@ -65,17 +61,10 @@ export default function ProjectDetail({ params }: ProjectDataProps) {
 
     setEntryStatus({ loading: true })
 
-    try {
-      await entryMutation.mutate({
-        projectId: params.projectId,
-        userId: userInfo.id
-      })
-    } catch (error) {
-      console.error('エントリー実行エラー:', error)
-    }
+    entryMutation.mutate({
+      projectId: params.projectId
+    })
   }
-
-  console.log('プロジェクトデータ:', project)
 
   if (isLoading) {
     return (

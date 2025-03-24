@@ -17,13 +17,11 @@ import {
 } from '@mantine/core'
 import Link from 'next/link'
 import { DateInput } from '@mantine/dates'
-import { useCreateProjectStore } from '@/store'
 import { createProjectSchema } from '~/schema/project'
 import type { CreateProjectInput } from '~/types/project'
 import { AVAILABLE_SKILLS } from '../[projectId]/edit/page'
 import { clientApi } from '~/lib/trpc/client-api'
 import { useRouter } from 'next/navigation'
-import type { TRPCClientError } from '@trpc/client'
 
 export default function CreateProject() {
   const router = useRouter()
