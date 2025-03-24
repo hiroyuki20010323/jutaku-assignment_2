@@ -21,9 +21,17 @@ import { useCreateProjectStore } from '@/store'
 import { createProjectSchema } from '~/schema/project'
 import type { CreateProjectInput } from '~/types/project'
 import { AVAILABLE_SKILLS } from '../[projectId]/edit/page'
+import { clientApi } from '~/lib/trpc/client-api'
+import { useRouter } from 'next/navigation'
+import type { TRPCClientError } from '@trpc/client'
 
 export default function CreateProject() {
-  const { addProject } = useCreateProjectStore()
+  const router = useRouter()
+  const createProject = clientApi.adminProject.create.useMutation({
+    onSuccess: () => {
+      router.push('/admin/projects')
+    }
+  })
 
   const {
     register,
@@ -43,34 +51,16 @@ export default function CreateProject() {
 
   const onSubmit = (data: CreateProjectInput) => {
     try {
-      // TODO この辺りのロジックも実際はDBに保存だからAPI実装時に消す
-
-      const formattedSkills = data.skills.map((skillName) => {
-        const availableSkill = AVAILABLE_SKILLS.find(
-          (s) => s.name === skillName
-        )
-
-        return availableSkill
-          ? { id: availableSkill.id, name: availableSkill.name }
-          : { id: `skill-${crypto.randomUUID().slice(0, 8)}`, name: skillName }
-      })
-
-      const newProject = {
-        id: crypto.randomUUID(),
-        title: data.title,
-        summary: data.summary,
-        skills: formattedSkills,
-        deadline: data.deadline,
-        unitPrice: data.unitPrice,
-        entryUsers: []
+      console.log('送信データ:', data)
+      // dateオブジェクトを確実にUTCで処理するために変換する
+      const formattedData = {
+        ...data,
+        deadline:
+          data.deadline instanceof Date
+            ? data.deadline
+            : new Date(data.deadline)
       }
-
-      addProject(newProject)
-
-      setTimeout(() => {
-        const currentState = useCreateProjectStore.getState()
-        console.log('保存されたプロジェクト一覧:', currentState.projects)
-      }, 100)
+      createProject.mutate(formattedData)
     } catch (error) {
       console.error('プロジェクト作成エラー:', error)
     }

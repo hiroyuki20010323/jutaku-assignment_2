@@ -1,28 +1,33 @@
 'use client'
 import React, { useState } from 'react'
-import {
-  Box,
-  Button,
-  Title,
-  Table,
-  Badge,
-  Text,
-  Container,
-  Flex
-} from '@mantine/core'
+import { Box, Button, Title, Table, Text, Container, Flex } from '@mantine/core'
 import Link from 'next/link'
 import type { RouteLiteral } from 'nextjs-routes'
 import DeleteProjectModal from './_component/DeleteProjectModal'
-import { TESTPROJECTS } from '@/app/projects/_component/ProjectList'
 import { clientApi } from '~/lib/trpc/client-api'
 
 export default function AdminProjects() {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
-  const { data: projects } = clientApi.adminProject.list.useQuery()
+  const [projectIdToDelete, setProjectIdToDelete] = useState<string | null>(
+    null
+  )
 
-  const handleConfirmDelete = () => {
-    // 削除処理のロジックを書くところ
+  const { data: projects, refetch } = clientApi.adminProject.list.useQuery()
+  const deleteProject = clientApi.adminProject.delete.useMutation({
+    onSuccess: () => {
+      refetch() // プロジェクトリストを再取得
+    }
+  })
+
+  const handleDeleteClick = (id: string) => {
+    setProjectIdToDelete(id)
+    setDeleteModalOpen(true)
+  }
+
+  const handleConfirmDelete = (id: string) => {
+    deleteProject.mutate(id)
     setDeleteModalOpen(false)
+    setProjectIdToDelete(null)
   }
 
   return (
@@ -103,7 +108,7 @@ export default function AdminProjects() {
                     variant="filled"
                     color="red"
                     size="xs"
-                    onClick={() => setDeleteModalOpen(true)}
+                    onClick={() => handleDeleteClick(project.id)}
                   >
                     削除
                   </Button>
@@ -119,6 +124,7 @@ export default function AdminProjects() {
         isOpen={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
         onConfirm={handleConfirmDelete}
+        projectId={projectIdToDelete}
       />
     </Container>
   )

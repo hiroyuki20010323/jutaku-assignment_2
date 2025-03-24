@@ -15,7 +15,7 @@ import Link from 'next/link'
 import type { RouteLiteral } from 'nextjs-routes'
 import DeleteProjectModal from '../_component/DeleteProjectModal'
 import EntryListModal from '../_component/EntryListModal'
-import { notFound } from 'next/navigation'
+import { notFound, useRouter } from 'next/navigation'
 import { clientApi } from '~/lib/trpc/client-api'
 
 export default function AdminProjectDetail({
@@ -23,12 +23,25 @@ export default function AdminProjectDetail({
 }: { params: { projectId: string } }) {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [isEntryModalOpen, setIsEntryModalOpen] = useState(false)
+  const router = useRouter()
 
   const {
     data: project,
     isLoading,
     error
   } = clientApi.adminProject.findById.useQuery(params.projectId)
+
+  const deleteProject = clientApi.adminProject.delete.useMutation({
+    onSuccess: () => {
+      // 削除成功後に一覧ページにリダイレクト
+      router.push('/admin/projects')
+    }
+  })
+
+  const handleConfirmDelete = (id: string) => {
+    deleteProject.mutate(id)
+    setIsDeleteModalOpen(false)
+  }
 
   if (isLoading) {
     return (
@@ -134,11 +147,8 @@ export default function AdminProjectDetail({
       <DeleteProjectModal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
-        onConfirm={() => {
-          //TODO コンポーネントトップレベルでロジック部は別途定義
-          console.log('削除処理を実行します')
-          setIsDeleteModalOpen(false)
-        }}
+        onConfirm={handleConfirmDelete}
+        projectId={project.id}
       />
 
       {/* エントリー一覧モーダル */}

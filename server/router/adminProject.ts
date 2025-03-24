@@ -4,7 +4,7 @@ import { adminProcedure } from '../middleware'
 import { projectRepository } from '../repository/project'
 import { TRPCError } from '@trpc/server'
 import { prisma } from '~/prisma/prismaClient'
-import { editProjectSchema } from '~/schema/project'
+import { editProjectSchema, createProjectSchema } from '~/schema/project'
 
 // エントリー用の入力スキーマを定義
 const entryInputSchema = z.object({
@@ -161,6 +161,121 @@ export const adminProjectRouter = router({
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'プロジェクトの更新に失敗しました'
+        })
+      }
+    }),
+
+  create: adminProcedure
+    .input(createProjectSchema)
+    .mutation(async ({ input }) => {
+      try {
+        // スキル情報の処理
+        const skillIds = await Promise.all(
+          input.skills.map(async (skillName) => {
+            // 既存のスキルを検索
+            let skill = await prisma.skill.findFirst({
+              where: { skillName }
+            })
+
+            // 存在しない場合は新規作成
+            if (!skill) {
+              skill = await prisma.skill.create({
+                data: { skillName }
+              })
+            }
+
+            return skill.id
+          })
+        )
+
+        // トランザクション内でプロジェクトの作成とスキル要件の作成を行う
+        const createdProject = await prisma.$transaction(async (tx) => {
+          // プロジェクト自体の作成
+          const project = await tx.project.create({
+            data: {
+              title: input.title,
+              summary: input.summary,
+              deadline: input.deadline,
+              unitPrice: input.unitPrice,
+              createdAt: new Date(),
+              updatedAt: new Date()
+            }
+          })
+
+          // スキル要件を作成
+          await Promise.all(
+            skillIds.map((skillId) =>
+              tx.skillRequirement.create({
+                data: {
+                  projectId: project.id,
+                  skillId
+                }
+              })
+            )
+          )
+
+          return project
+        })
+
+        return {
+          id: createdProject.id,
+          title: createdProject.title,
+          summary: createdProject.summary,
+          deadline: createdProject.deadline,
+          unitPrice: createdProject.unitPrice,
+          skills: skillIds
+        }
+      } catch (error) {
+        console.error('プロジェクト作成エラー:', error)
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'プロジェクトの作成に失敗しました'
+        })
+      }
+    }),
+
+  // プロジェクト削除
+  delete: adminProcedure
+    .input(z.string())
+    .mutation(async ({ input: projectId }) => {
+      try {
+        // プロジェクトの存在確認
+        const existingProject = await projectRepository.findById(projectId)
+        if (!existingProject) {
+          throw new TRPCError({
+            code: 'NOT_FOUND',
+            message: '削除するプロジェクトが見つかりませんでした'
+          })
+        }
+
+        // トランザクション内でスキル要件とプロジェクトを削除
+        await prisma.$transaction(async (tx) => {
+          // 関連するスキル要件を削除
+          await tx.skillRequirement.deleteMany({
+            where: { projectId }
+          })
+
+          // 関連するエントリー情報を削除
+          await tx.projectEntry.deleteMany({
+            where: { projectId }
+          })
+
+          // プロジェクト自体を削除
+          await tx.project.delete({
+            where: { id: projectId }
+          })
+        })
+
+        return { success: true, message: 'プロジェクトを削除しました' }
+      } catch (error) {
+        if (error instanceof TRPCError) {
+          throw error
+        }
+
+        console.error('プロジェクト削除エラー:', error)
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'プロジェクトの削除に失敗しました'
         })
       }
     })
