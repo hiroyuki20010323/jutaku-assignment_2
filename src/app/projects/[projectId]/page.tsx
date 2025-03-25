@@ -10,7 +10,8 @@ import {
   Flex,
   Modal,
   Center,
-  Loader
+  Loader,
+  Stack
 } from '@mantine/core'
 
 import { notFound } from 'next/navigation'
@@ -32,11 +33,11 @@ export default function ProjectDetail({ params }: ProjectDataProps) {
     error?: string
   }>({ loading: false })
 
-  const { data: userInfo } = clientApi.userInfo.useQuery()
-
-  const { data: project, error } = clientApi.project.findById.useQuery(
-    params.projectId
-  )
+  const {
+    data: project,
+    error,
+    isLoading
+  } = clientApi.project.findById.useQuery(params.projectId)
 
   // エントリーミューテーション
   const entryMutation = clientApi.project.entry.useMutation({
@@ -52,16 +53,21 @@ export default function ProjectDetail({ params }: ProjectDataProps) {
   })
 
   const handleEntry = () => {
-    if (!userInfo) {
-      alert('ログインが必要です')
-      return
-    }
-
     setEntryStatus({ loading: true })
 
     entryMutation.mutate({
       projectId: params.projectId
     })
+  }
+
+  if (isLoading) {
+    return (
+      <Container size="lg" py="xl">
+        <Center style={{ height: '50vh' }}>
+          <Loader size="xl" />
+        </Center>
+      </Container>
+    )
   }
 
   if (error || !project) {

@@ -24,17 +24,7 @@ import { useEffect } from 'react'
 import type { EditProjectInput } from '~/types/project'
 import { editProjectSchema } from '~/schema/project'
 import { clientApi } from '~/lib/trpc/client-api'
-import { Router } from 'next/router'
 import { useRouter } from 'next/navigation'
-
-// スキルリストをProject型に合わせた形式に変更
-export const AVAILABLE_SKILLS = [
-  { id: 'skill1', name: 'React' },
-  { id: 'skill2', name: 'Next.js' },
-  { id: 'skill3', name: 'AWS' },
-  { id: 'skill4', name: 'Node.js' },
-  { id: 'skill5', name: 'Prisma' }
-]
 
 export default function EditProject({
   params
@@ -44,6 +34,9 @@ export default function EditProject({
   )
 
   const editMutation = clientApi.adminProject.edit.useMutation()
+
+  const { data: availableSkills = [] } =
+    clientApi.adminProject.findAllSkills.useQuery()
 
   const router = useRouter()
 
@@ -159,7 +152,7 @@ export default function EditProject({
                   placeholder={
                     field.value.length === 0 ? 'スキルを選択' : undefined
                   }
-                  data={AVAILABLE_SKILLS.map((skill) => skill.name)}
+                  data={availableSkills.map((skill) => skill.name)}
                   error={errors.skills?.message}
                   required
                   value={field.value}

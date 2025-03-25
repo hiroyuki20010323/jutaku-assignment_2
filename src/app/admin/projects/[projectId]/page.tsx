@@ -25,9 +25,11 @@ export default function AdminProjectDetail({
   const [isEntryModalOpen, setIsEntryModalOpen] = useState(false)
   const router = useRouter()
 
-  const { data: project, error } = clientApi.adminProject.findById.useQuery(
-    params.projectId
-  )
+  const {
+    data: project,
+    error,
+    isLoading
+  } = clientApi.adminProject.findById.useQuery(params.projectId)
 
   const deleteProject = clientApi.adminProject.delete.useMutation({
     onSuccess: () => {
@@ -38,6 +40,16 @@ export default function AdminProjectDetail({
   const handleConfirmDelete = (id: string) => {
     deleteProject.mutate(id)
     setIsDeleteModalOpen(false)
+  }
+
+  if (isLoading) {
+    return (
+      <Container size="lg" py="xl">
+        <Center style={{ height: '50vh' }}>
+          <Loader size="xl" />
+        </Center>
+      </Container>
+    )
   }
 
   if (error || !project) {

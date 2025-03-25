@@ -21,6 +21,18 @@ export type EntryInput = z.infer<typeof entryInputSchema>
 export type EditProjectWithIdInput = z.infer<typeof editProjectInputSchema>
 
 export const adminProjectRouter = router({
+  // スキル一覧を取得
+  findAllSkills: adminProcedure.query(async () => {
+    const skills = await prisma.skill.findMany({
+      orderBy: { skillName: 'asc' }
+    })
+
+    return skills.map((skill) => ({
+      id: skill.id,
+      name: skill.skillName
+    }))
+  }),
+
   // 案件詳細
   findById: adminProcedure.input(z.string()).query(async ({ input }) => {
     const project = await projectRepository.findById(input)

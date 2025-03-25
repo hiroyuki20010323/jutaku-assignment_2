@@ -19,7 +19,6 @@ import Link from 'next/link'
 import { DateInput } from '@mantine/dates'
 import { createProjectSchema } from '~/schema/project'
 import type { CreateProjectInput } from '~/types/project'
-import { AVAILABLE_SKILLS } from '../[projectId]/edit/page'
 import { clientApi } from '~/lib/trpc/client-api'
 import { useRouter } from 'next/navigation'
 
@@ -30,6 +29,10 @@ export default function CreateProject() {
       router.push('/admin/projects')
     }
   })
+
+  // スキル一覧を取得
+  const { data: availableSkills = [] } =
+    clientApi.adminProject.findAllSkills.useQuery()
 
   const {
     register,
@@ -115,7 +118,7 @@ export default function CreateProject() {
                   placeholder={
                     field.value.length === 0 ? 'スキルを選択' : undefined
                   }
-                  data={AVAILABLE_SKILLS.map((skill) => skill.name)}
+                  data={availableSkills.map((skill) => skill.name)}
                   error={errors.skills?.message}
                   required
                   value={field.value}
