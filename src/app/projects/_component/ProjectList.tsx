@@ -7,7 +7,6 @@ import { clientApi } from '~/lib/trpc/client-api'
 
 export const ProjectList = () => {
   const { data: projects } = clientApi.project.list.useQuery()
-  console.log(projects)
 
   return (
     <>

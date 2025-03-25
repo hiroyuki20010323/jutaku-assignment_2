@@ -34,7 +34,7 @@ export default function CreateProject() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
     control
   } = useForm<CreateProjectInput>({
     resolver: zodResolver(createProjectSchema),
@@ -47,10 +47,8 @@ export default function CreateProject() {
     }
   })
 
-  const onSubmit = (data: CreateProjectInput) => {
+  const onSubmit = async (data: CreateProjectInput) => {
     try {
-      console.log('送信データ:', data)
-      // dateオブジェクトを確実にUTCで処理するために変換する
       const formattedData = {
         ...data,
         deadline:
@@ -58,7 +56,7 @@ export default function CreateProject() {
             ? data.deadline
             : new Date(data.deadline)
       }
-      createProject.mutate(formattedData)
+      await createProject.mutateAsync(formattedData)
     } catch (error) {
       console.error('プロジェクト作成エラー:', error)
     }
@@ -169,7 +167,12 @@ export default function CreateProject() {
             />
 
             <Flex gap="md" justify="center" mt={40}>
-              <Button type="submit" color="blue" fullWidth>
+              <Button
+                type="submit"
+                color="blue"
+                fullWidth
+                loading={isSubmitting}
+              >
                 登録
               </Button>
             </Flex>

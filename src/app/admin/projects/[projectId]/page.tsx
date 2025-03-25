@@ -25,15 +25,12 @@ export default function AdminProjectDetail({
   const [isEntryModalOpen, setIsEntryModalOpen] = useState(false)
   const router = useRouter()
 
-  const {
-    data: project,
-    isLoading,
-    error
-  } = clientApi.adminProject.findById.useQuery(params.projectId)
+  const { data: project, error } = clientApi.adminProject.findById.useQuery(
+    params.projectId
+  )
 
   const deleteProject = clientApi.adminProject.delete.useMutation({
     onSuccess: () => {
-      // 削除成功後に一覧ページにリダイレクト
       router.push('/admin/projects')
     }
   })
@@ -41,16 +38,6 @@ export default function AdminProjectDetail({
   const handleConfirmDelete = (id: string) => {
     deleteProject.mutate(id)
     setIsDeleteModalOpen(false)
-  }
-
-  if (isLoading) {
-    return (
-      <Container size="lg" py="xl">
-        <Center style={{ height: '50vh' }}>
-          <Loader size="xl" />
-        </Center>
-      </Container>
-    )
   }
 
   if (error || !project) {

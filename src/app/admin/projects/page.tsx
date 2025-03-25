@@ -15,7 +15,7 @@ export default function AdminProjects() {
   const { data: projects, refetch } = clientApi.project.list.useQuery()
   const deleteProject = clientApi.adminProject.delete.useMutation({
     onSuccess: () => {
-      refetch() // プロジェクトリストを再取得
+      refetch()
     }
   })
 

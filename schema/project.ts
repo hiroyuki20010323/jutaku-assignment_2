@@ -8,14 +8,11 @@ export const editProjectSchema = z.object({
     // 文字列または日付を受け取り、確実にDate型に変換
     (arg) => {
       if (typeof arg === 'string') {
-        // ISO文字列または他の日付文字列からUTC日付オブジェクトを作成
         return new Date(arg)
       }
       if (arg instanceof Date) {
-        // すでにDateオブジェクトの場合はそのまま返す
         return arg
       }
-      // その他の場合は変換を試みる
       return new Date(String(arg))
     },
     z.date({

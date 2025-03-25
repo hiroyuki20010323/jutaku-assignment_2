@@ -34,11 +34,9 @@ export default function ProjectDetail({ params }: ProjectDataProps) {
 
   const { data: userInfo } = clientApi.userInfo.useQuery()
 
-  const {
-    data: project,
-    isLoading,
-    error
-  } = clientApi.project.findById.useQuery(params.projectId)
+  const { data: project, error } = clientApi.project.findById.useQuery(
+    params.projectId
+  )
 
   // エントリーミューテーション
   const entryMutation = clientApi.project.entry.useMutation({
@@ -64,16 +62,6 @@ export default function ProjectDetail({ params }: ProjectDataProps) {
     entryMutation.mutate({
       projectId: params.projectId
     })
-  }
-
-  if (isLoading) {
-    return (
-      <Container size="lg" py="xl">
-        <Center style={{ height: '50vh' }}>
-          <Loader size="xl" />
-        </Center>
-      </Container>
-    )
   }
 
   if (error || !project) {

@@ -14,23 +14,8 @@ import { clientApi } from '~/lib/trpc/client-api'
 
 export default function EntryList() {
   // ユーザーのエントリーリストを取得
-  const {
-    data: entries,
-    isLoading,
-    error
-  } = clientApi.project.entryList.useQuery()
+  const { data: entries, error } = clientApi.project.entryList.useQuery()
   console.log(entries)
-
-  // ローディング中の表示
-  if (isLoading) {
-    return (
-      <Container size="lg" py="xl">
-        <Center style={{ height: '50vh' }}>
-          <Loader size="xl" />
-        </Center>
-      </Container>
-    )
-  }
 
   // エラー時の表示
   if (error) {

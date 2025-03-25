@@ -39,21 +39,18 @@ export const AVAILABLE_SKILLS = [
 export default function EditProject({
   params
 }: { params: { projectId: string } }) {
-  const {
-    data: project,
-    isLoading,
-    refetch
-  } = clientApi.adminProject.findById.useQuery(params.projectId)
+  const { data: project, refetch } = clientApi.adminProject.findById.useQuery(
+    params.projectId
+  )
 
   const editMutation = clientApi.adminProject.edit.useMutation()
 
   const router = useRouter()
 
-  // react-hook-formの設定
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
     control,
     reset
   } = useForm<EditProjectInput>({
@@ -67,7 +64,6 @@ export default function EditProject({
     }
   })
 
-  // プロジェクトデータを取得したらフォームの値をリセット
   useEffect(() => {
     if (project) {
       reset({
@@ -82,17 +78,14 @@ export default function EditProject({
 
   const onSubmit = async (data: EditProjectInput) => {
     try {
-      // データ送信前に日付を確実にDate型に変換
       const formattedData = {
         ...data,
-        // deadlineがstring型の場合はDateに変換、すでにDate型なら変更なし
         deadline:
           data.deadline instanceof Date
             ? data.deadline
             : new Date(data.deadline)
       }
 
-      // 直接ISOStringで送信することでJSON変換での型情報喪失を防ぐ
       const apiData = {
         ...formattedData,
         deadline: formattedData.deadline.toISOString()
@@ -113,15 +106,6 @@ export default function EditProject({
     }
   }
 
-  if (isLoading) {
-    return (
-      <Container size="lg" py="xl">
-        <Center style={{ height: '50vh' }}>
-          <Loader size="xl" />
-        </Center>
-      </Container>
-    )
-  }
   return (
     <Container size="md">
       <Stack mb="xl" mt={40}>
@@ -227,7 +211,12 @@ export default function EditProject({
             />
 
             <Flex gap="md" justify="center" mt="xl">
-              <Button type="submit" color="blue" fullWidth>
+              <Button
+                type="submit"
+                color="blue"
+                fullWidth
+                loading={isSubmitting}
+              >
                 保存
               </Button>
             </Flex>

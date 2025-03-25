@@ -30,11 +30,25 @@ export const AdminSigninForm = () => {
   })
 
   const onSubmit = async (data: SignInFormData) => {
-    console.log('管理者ログイン処理発火')
-    await signin({
+    const result = await signin({
       ...data,
       isAdmin: true // 管理者ログインであることを示すフラグを追加
     })
+
+    if (result?.error) {
+      try {
+        const errorObj = JSON.parse(result.error)
+        if (errorObj.code) {
+          if (errorObj.code.includes('invalid_credentials')) {
+            alert('メールアドレスまたはパスワードが正しくありません')
+          } else {
+            alert(`ログインエラー: ${errorObj.message}`)
+          }
+        }
+      } catch (e) {
+        alert(result.error)
+      }
+    }
   }
 
   return (

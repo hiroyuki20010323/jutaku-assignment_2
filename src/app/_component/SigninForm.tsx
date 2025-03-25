@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { signin } from '@/serverActions/supabaseAuth'
@@ -30,8 +30,24 @@ export function SigninForm() {
   })
 
   const onSignInSubmit = async (data: SignInFormData) => {
-    console.log('aaa')
-    await signin(data)
+    const result = await signin(data)
+
+    if (result?.error) {
+      try {
+        const errorObj = JSON.parse(result.error)
+        console.log(errorObj)
+
+        if (errorObj.code) {
+          if (errorObj.code.includes('invalid_credentials')) {
+            alert('メールアドレスまたはパスワードが正しくありません')
+          } else {
+            alert(`ログインエラー: ${errorObj.message}`)
+          }
+        }
+      } catch (e) {
+        alert(result.error)
+      }
+    }
   }
 
   return (
