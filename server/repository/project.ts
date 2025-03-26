@@ -95,6 +95,17 @@ export const projectRepository = {
 
   // エントリー
   async entry({ projectId, userId }: ProjectEntryInput): Promise<void> {
+    const existingEntry = await prisma.projectEntry.findFirst({
+      where: {
+        projectId,
+        userId
+      }
+    })
+
+    if (existingEntry) {
+      throw new Error('既にこのプロジェクトにエントリー済みです')
+    }
+
     await prisma.projectEntry.create({
       data: {
         project: {

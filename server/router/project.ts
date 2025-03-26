@@ -82,6 +82,14 @@ export const projectRouter = router({
         }
       } catch (error) {
         console.error('エントリー作成エラー:', error)
+        if (error instanceof Error) {
+          if (error.message === '既にこのプロジェクトにエントリー済みです') {
+            throw new TRPCError({
+              code: 'BAD_REQUEST',
+              message: error.message
+            })
+          }
+        }
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'エントリーの作成に失敗しました'
