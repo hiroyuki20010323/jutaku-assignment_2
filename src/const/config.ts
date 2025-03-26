@@ -15,7 +15,9 @@ import {
 export const SESSION_COOKIE_MAX_AGE = 60 * 60 * 24 * 7 * 1000
 
 // 認証後のリダイレクト先
-export const AFTER_SIGNIN_PATH = '/' satisfies LinkProps['href']
+export const AFTER_SIGNIN_PATH = '/projects' satisfies LinkProps['href']
+export const AFTER_ADMIN_SIGNIN_PATH =
+  '/admin/projects' satisfies LinkProps['href']
 export const AFTER_SIGNOUT_PATH = '/' satisfies LinkProps['href']
 
 export const AFTER_SIGNUP_PATH = '/' satisfies LinkProps['href']
@@ -24,7 +26,7 @@ export const AFTER_SIGNUP_FOR_DB_REGISTER_PATH =
 
 // ログイン済みチェックURLリスト
 export function isLoginedCheckUrl(url: string): boolean {
-  return url.startsWith('/my-page')
+  return url.startsWith('/admin/projects')
   // url.startsWith('/users')
 }
 

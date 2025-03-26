@@ -17,18 +17,27 @@ import {
 } from '@mantine/core'
 import Link from 'next/link'
 import { DateInput } from '@mantine/dates'
-import { useCreateProjectStore } from '@/store'
 import { createProjectSchema } from '~/schema/project'
 import type { CreateProjectInput } from '~/types/project'
-import { AVAILABLE_SKILLS } from '../[projectId]/edit/page'
+import { clientApi } from '~/lib/trpc/client-api'
+import { useRouter } from 'next/navigation'
 
 export default function CreateProject() {
-  const { addProject } = useCreateProjectStore()
+  const router = useRouter()
+  const createProject = clientApi.adminProject.create.useMutation({
+    onSuccess: () => {
+      router.push('/admin/projects')
+    }
+  })
+
+  // スキル一覧を取得
+  const { data: availableSkills = [] } =
+    clientApi.adminProject.findAllSkills.useQuery()
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
     control
   } = useForm<CreateProjectInput>({
     resolver: zodResolver(createProjectSchema),
@@ -41,36 +50,16 @@ export default function CreateProject() {
     }
   })
 
-  const onSubmit = (data: CreateProjectInput) => {
+  const onSubmit = async (data: CreateProjectInput) => {
     try {
-      // TODO この辺りのロジックも実際はDBに保存だからAPI実装時に消す
-
-      const formattedSkills = data.skills.map((skillName) => {
-        const availableSkill = AVAILABLE_SKILLS.find(
-          (s) => s.name === skillName
-        )
-
-        return availableSkill
-          ? { id: availableSkill.id, name: availableSkill.name }
-          : { id: `skill-${crypto.randomUUID().slice(0, 8)}`, name: skillName }
-      })
-
-      const newProject = {
-        id: crypto.randomUUID(),
-        title: data.title,
-        summary: data.summary,
-        skills: formattedSkills,
-        deadline: data.deadline,
-        unitPrice: data.unitPrice,
-        entryUsers: []
+      const formattedData = {
+        ...data,
+        deadline:
+          data.deadline instanceof Date
+            ? data.deadline
+            : new Date(data.deadline)
       }
-
-      addProject(newProject)
-
-      setTimeout(() => {
-        const currentState = useCreateProjectStore.getState()
-        console.log('保存されたプロジェクト一覧:', currentState.projects)
-      }, 100)
+      await createProject.mutateAsync(formattedData)
     } catch (error) {
       console.error('プロジェクト作成エラー:', error)
     }
@@ -129,7 +118,7 @@ export default function CreateProject() {
                   placeholder={
                     field.value.length === 0 ? 'スキルを選択' : undefined
                   }
-                  data={AVAILABLE_SKILLS.map((skill) => skill.name)}
+                  data={availableSkills.map((skill) => skill.name)}
                   error={errors.skills?.message}
                   required
                   value={field.value}
@@ -181,7 +170,12 @@ export default function CreateProject() {
             />
 
             <Flex gap="md" justify="center" mt={40}>
-              <Button type="submit" color="blue" fullWidth>
+              <Button
+                type="submit"
+                color="blue"
+                fullWidth
+                loading={isSubmitting}
+              >
                 登録
               </Button>
             </Flex>

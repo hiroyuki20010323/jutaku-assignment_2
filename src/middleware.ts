@@ -5,10 +5,10 @@ import {
   NEXT_PUBLIC_SUPABASE_URL,
   NEXT_PUBLIC_SUPABASE_ANON_KEY
 } from '../util/env'
-// import {
-//   LOGINED_CHECK_FAILED_REDIRECT_URL,
-//   isLoginedCheckUrl
-// } from './const/config'
+import {
+  LOGINED_CHECK_FAILED_REDIRECT_URL,
+  isLoginedCheckUrl
+} from './const/config'
 import { createServerClient } from '@supabase/ssr'
 import { CookieOptionsBase } from '~/lib/supabase/cookie'
 
@@ -68,15 +68,31 @@ export async function updateSession(req: NextRequest) {
     )
 
     // ログイン済みチェックが必要な場合は実装する
-    // const { error } = await supabase.auth.getUser()
-    // if (isLoginedCheckUrl(req.nextUrl.pathname) && error) {
-    //   console.log("redirect to '/signin'")
-    //   const redirectUrl = req.nextUrl.clone()
-    //   redirectUrl.pathname = LOGINED_CHECK_FAILED_REDIRECT_URL
-    //   redirectUrl.searchParams.set('redirectedFrom', req.nextUrl.pathname)
+    const { data: user, error } = await supabase.auth.getUser()
 
-    //   return NextResponse.redirect(redirectUrl)
-    // }
+    // 認証をスキップするパスのリスト
+    const publicPaths = ['/', '/admin/signin', '/signup']
+
+    // ログインチェック
+    if (!publicPaths.includes(req.nextUrl.pathname) && (error || !user.user)) {
+      const redirectUrl = req.nextUrl.clone()
+      redirectUrl.pathname = '/'
+      redirectUrl.searchParams.set('redirectedFrom', req.nextUrl.pathname)
+
+      return NextResponse.redirect(redirectUrl)
+    }
+
+    // 管理者ページへのアクセス制御
+    if (
+      req.nextUrl.pathname.startsWith('/admin') &&
+      req.nextUrl.pathname !== '/admin/signin' &&
+      (!user.user || user.user.user_metadata.role !== 'ADMIN')
+    ) {
+      const redirectUrl = req.nextUrl.clone()
+      redirectUrl.pathname = '/admin/signin'
+
+      return NextResponse.redirect(redirectUrl)
+    }
 
     return res
   } catch (e) {

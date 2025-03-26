@@ -4,7 +4,8 @@ import './globals.css'
 import { TRPCProvider } from '~/lib/trpc/client-api'
 import '@mantine/core/styles.css'
 import '@mantine/dates/styles.css'
-import { Box, ColorSchemeScript, Flex, MantineProvider } from '@mantine/core'
+import { Box, ColorSchemeScript, MantineProvider } from '@mantine/core'
+import LogoutButton from '@/components/logoutButton'
 
 const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
@@ -25,11 +26,10 @@ export default function RootLayout({
         </head>
         <body className={inter.className}>
           <MantineProvider>
-            <Flex h="100vh">
-              <Box h="100vh" style={{ flex: 1, overflowY: 'auto' }}>
-                {children}
-              </Box>
-            </Flex>
+            <Box pos="fixed" top={10} right={20} style={{ zIndex: 1000 }}>
+              <LogoutButton />
+            </Box>
+            <Box>{children}</Box>
           </MantineProvider>
         </body>
       </html>

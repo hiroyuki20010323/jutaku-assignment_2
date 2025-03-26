@@ -6,24 +6,6 @@ export type EditProjectInput = z.infer<typeof editProjectSchema>
 // プロジェクト作成用
 export type CreateProjectInput = z.infer<typeof createProjectSchema>
 
-// テストデータ用の型
-export type TestProject = {
-  id: string
-  title: string
-  summary: string
-  deadline: Date
-  unitPrice: number
-  skills: {
-    id: string
-    name: string
-  }[]
-  createdAt: Date
-  entryUsers: {
-    id: string
-    username: string
-  }[]
-}
-
 // zustandでローカルストレージ保存する時に都合の良い型
 export type Project = {
   id: string

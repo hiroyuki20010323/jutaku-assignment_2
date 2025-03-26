@@ -11,8 +11,7 @@ import {
   TextInput,
   PasswordInput,
   Title,
-  Stack,
-  Text
+  Stack
 } from '@mantine/core'
 import { signupSchema } from '~/schema/auth'
 import type { SignupFormData } from '~/types/auth'
@@ -33,7 +32,7 @@ export function SignupForm() {
   })
 
   const onSignupSubmit = async (data: SignupFormData) => {
-    signup(data)
+    await signup(data)
     console.log(data)
   }
 

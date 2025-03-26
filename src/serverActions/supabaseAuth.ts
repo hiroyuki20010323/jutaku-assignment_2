@@ -1,6 +1,7 @@
 'use server'
 
 import {
+  AFTER_ADMIN_SIGNIN_PATH,
   AFTER_SIGNIN_PATH,
   AFTER_SIGNOUT_PATH,
   AFTER_SIGNUP_FOR_DB_REGISTER_PATH
@@ -14,27 +15,41 @@ type EmailAndPassword = {
   password: string
 }
 
+type SignInParams = EmailAndPassword & {
+  isAdmin?: boolean
+}
+
+type SignUpData = {
+  email: string
+  password: string
+  name: string
+}
+
 export const signup = async ({
   email,
-  password
-}: EmailAndPassword): Promise<{
+  password,
+  name
+}: SignUpData): Promise<{
   error?: string
 }> => {
   try {
-    console.log('signup:', { email, password })
+    console.log('signup:', { email, name })
 
     const authResponse = await createClient().auth.signUp({
       email,
-      password
-      // options: {
-      //   emailRedirectTo: `${location.origin}/api/auth/callback`
-      // }
+      password,
+      options: {
+        data: {
+          name: name // ユーザーメタデータとして名前を保存
+        }
+        // emailRedirectTo: `${location.origin}/api/auth/callback`
+      }
     })
     console.log('authResponse', authResponse)
     const user = authResponse.data.user
     await serverApi().user.create({
       email: user?.email ?? '',
-      name: user?.email ?? ''
+      name: name
     })
 
     const userId = user?.id
@@ -46,14 +61,18 @@ export const signup = async ({
   }
   redirect(AFTER_SIGNUP_FOR_DB_REGISTER_PATH)
 }
+
 export const signin = async ({
   email,
-  password
-}: EmailAndPassword): Promise<{
+  password,
+  // デフォルトfalseだからadmin側だけformでtrue送る
+  // TODO middlewereのindex.tsでadminかどうかの確認処理を実行しているのに、apiの追加回しではなく、routerでプロシージャ分ける
+  isAdmin = false
+}: SignInParams): Promise<{
   error?: string
 }> => {
   try {
-    console.log('signin:', { email, password })
+    console.log('signin:', { email, password, isAdmin })
 
     const { data, error } = await createClient().auth.signInWithPassword({
       email,
@@ -68,7 +87,12 @@ export const signin = async ({
   } catch (error) {
     return { error: JSON.stringify(error) }
   }
-  redirect(AFTER_SIGNIN_PATH)
+
+  if (isAdmin) {
+    redirect(AFTER_ADMIN_SIGNIN_PATH)
+  } else {
+    redirect(AFTER_SIGNIN_PATH)
+  }
 }
 
 export const signOut = async (): Promise<{
@@ -107,10 +131,6 @@ export const changeEmail = async (
   return {}
 }
 
-type ChangePasswordParams = {
-  userId: string
-}
-
 export const changePassword = async (
   password: string
 ): Promise<{
@@ -130,10 +150,6 @@ export const changePassword = async (
     return { error: JSON.stringify(error) }
   }
   return {}
-}
-
-type ResetPasswordParams = {
-  email: string
 }
 
 export const resetPassword = async (

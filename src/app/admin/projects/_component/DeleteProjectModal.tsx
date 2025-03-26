@@ -3,13 +3,15 @@ import { Box, Button, Center, Modal, Text, Flex } from '@mantine/core'
 type DeleteProjectModalProps = {
   isOpen: boolean
   onClose: () => void
-  onConfirm: () => void
+  onConfirm: (id: string) => void
+  projectId: string | null
 }
 
 export default function DeleteProjectModal({
   isOpen,
   onClose,
-  onConfirm
+  onConfirm,
+  projectId
 }: DeleteProjectModalProps) {
   return (
     <Modal opened={isOpen} onClose={onClose} centered size="md" withCloseButton>
@@ -30,7 +32,11 @@ export default function DeleteProjectModal({
             >
               いいえ
             </Button>
-            <Button color="red" w={80} onClick={onConfirm}>
+            <Button
+              color="red"
+              w={80}
+              onClick={() => projectId && onConfirm(projectId)}
+            >
               はい
             </Button>
           </Flex>
